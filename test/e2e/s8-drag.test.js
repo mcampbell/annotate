@@ -12,7 +12,9 @@ const near = (actual, expected, label) =>
 const geometry = () =>
   page.evaluate(() => Annot.canvas.getObjects().map((o) => ({ left: o.left, top: o.top, w: o.width * o.scaleX, h: o.height * o.scaleY })));
 const assertRect = async ({ left, top, w, h }) => {
-  const [g] = await geometry();
+  const gs = await geometry();
+  assert.equal(gs.length, 1);
+  const [g] = gs;
   near(g.left, left, 'left'); near(g.top, top, 'top'); near(g.w, w, 'width'); near(g.h, h, 'height');
 };
 
@@ -82,4 +84,44 @@ test('dragged object ends selected', async () => {
   await useTool(page, 'box');
   await dragScene(page, 100, 100, 400, 300);
   assert.equal(await page.evaluate(() => Annot.canvas.getActiveObject()?.annotTool), 'box');
+});
+
+// Press and move without release: a drag in progress.
+async function startDrag(x1, y1, x2, y2) {
+  await page.mouse.move(...(await toScreen(page, x1, y1)));
+  await page.mouse.down();
+  await page.mouse.move(...(await toScreen(page, x2, y2)), { steps: 3 });
+}
+
+test('touchcancel drops the drag in progress', async () => {
+  await pasteImage(page);
+  await useTool(page, 'box');
+  await startDrag(100, 100, 400, 300);
+  await page.evaluate(() => Annot.canvas.upperCanvasEl.dispatchEvent(new Event('touchcancel')));
+  await page.mouse.up();
+  assert.deepEqual(await objects(page), []);
+});
+
+test('a press with a stale drag (lost mouse-up) drops the stale preview', async () => {
+  await pasteImage(page);
+  await useTool(page, 'box');
+  await page.evaluate(() => {
+    const press = (x, y) => Annot.canvas.fire('mouse:down', { e: { button: 0 }, scenePoint: new fabric.Point(x, y) });
+    press(100, 100); // its mouse-up is lost
+    press(500, 500);
+    Annot.canvas.fire('mouse:up', { e: {}, scenePoint: new fabric.Point(800, 700) });
+  });
+  await assertRect({ left: 650, top: 600, w: 300, h: 200 });
+});
+
+test('undo during a drag leaves no ghost object', async () => {
+  await pasteImage(page);
+  await useTool(page, 'box');
+  await dragScene(page, 100, 100, 400, 300);
+  await startDrag(1000, 600, 1400, 900);
+  await page.keyboard.press('ControlOrMeta+z');
+  await page.waitForFunction(() => !Annot.undoBusy());
+  await page.mouse.up();
+  assert.deepEqual(await objects(page), []);
+  assert.equal(await page.evaluate(() => Annot.canvas.getActiveObject()), undefined);
 });

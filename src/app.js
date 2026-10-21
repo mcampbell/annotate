@@ -64,8 +64,15 @@
     }
   }
 
+  const cancelDrawing = () => {
+    if (!drawing) return;
+    canvas.remove(drawing.obj);
+    drawing = null;
+  };
+
   // Left button only. Touch events have no button, so `> 0` keeps taps working.
   canvas.on('mouse:down', ({ e, target, scenePoint }) => {
+    cancelDrawing(); // a lost mouse-up must not leave a stale preview
     if (e.button > 0 || target || !activeTool || !canvas.backgroundImage) return;
     const tool = activeTool;
     const obj = tool.create(scenePoint, Annot.style());
@@ -92,12 +99,11 @@
 
   canvas.on('mouse:up', ({ scenePoint }) => {
     if (!drawing) return;
-    const { obj, start } = drawing;
+    const { tool, obj, start } = drawing;
+    tool.drag(obj, start, scenePoint); // the release point is the end, even with no move after the last one
+    if (Math.hypot(scenePoint.x - start.x, scenePoint.y - start.y) * canvas.getZoom() < MIN_DRAG_PX) return cancelDrawing();
     drawing = null;
-    if (Math.hypot(scenePoint.x - start.x, scenePoint.y - start.y) * canvas.getZoom() < MIN_DRAG_PX) {
-      canvas.remove(obj);
-      return;
-    }
+    if (!canvas.contains(obj)) return; // undo or a new image removed it mid-drag
     obj.excludeFromExport = false;
     canvas.setActiveObject(obj);
     canvas.fire('object:modified', { target: obj });
@@ -112,6 +118,9 @@
     canvas.discardActiveObject();
     canvas.remove(...objects);
   });
+
+  // Fabric has no touchcancel path, so a cancelled touch would never fire mouse:up.
+  canvas.upperCanvasEl.addEventListener('touchcancel', cancelDrawing);
 
   addButton('select', 'Select');
   selectTool('select');

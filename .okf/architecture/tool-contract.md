@@ -29,7 +29,7 @@ Each tool file calls `Annot.registerTool(tool)`. `app.js` adds a toolbar button 
 # Rules
 
 * A press starts only on empty canvas, with the left button or touch, when an image is loaded and a tool other than Select is active. A press on an object selects it.
-* Click tool (no `drag`): the press places the object. Drag tool: the press adds a preview with `excludeFromExport` (so undo ignores it); mouse-up commits it and fires `object:modified`, or removes it if the drag is under 5 screen px ([decision](/decisions/drag-to-draw.md)).
+* Click tool (no `drag`): the press places the object. Drag tool: the press adds a preview with `excludeFromExport` (so undo ignores it); mouse-up commits it and fires `object:modified`, or removes it if the drag is under 5 screen px ([decision](/decisions/drag-to-draw.md)). The release point sets the final shape. A `touchcancel`, a new press after a lost mouse-up, or an undo or image load mid-drag drops the preview.
 * `annotTool` serializes for every class because `app.js` sets `fabric.BaseFabricObject.customProperties = ['annotTool']` ([pitfall](/pitfalls/fabric-7.md)).
 * A custom class must call `fabric.classRegistry.setClass` and set its defaults in the constructor, not in `create`, so [undo](/modules/undo-redo.md) restores it intact.
 * To add a tool: one file in `src/tools/` and one `<script>` line in `index.html`.

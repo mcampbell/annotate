@@ -6,6 +6,7 @@
   let pending = false;
 
   // canvas.toObject() puts objects inside a multi-selection back into scene coords.
+  // It also skips excludeFromExport objects: app.js marks a drag preview so until the drag commits.
   const snapshot = () => JSON.stringify(canvas.toObject().objects);
   // One record per task: a multi-object delete or style change fires one event per object.
   const record = () => {
