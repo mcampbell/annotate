@@ -1,0 +1,13 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; font: 14px system-ui, sans-serif; background: #2b2b2b; color: #eee; }
+body { display: flex; flex-direction: column; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 8px 12px; background: #1e1e1e; }
+#tools { display: flex; gap: 4px; }
+button, .button { padding: 6px 10px; border: 1px solid #555; border-radius: 4px; background: #333; color: inherit; font: inherit; cursor: pointer; }
+button[aria-pressed="true"] { background: #1565c0; border-color: #1565c0; }
+button:disabled { opacity: 0.4; cursor: default; }
+#status.error { color: #ff8a80; }
+#stage { flex: 1; overflow: auto; display: grid; place-items: center; padding: 16px; }
+#hint { color: #aaa; font-size: 18px; }
+body:not(.loaded) .canvas-container { display: none; }
+body.loaded #hint { display: none; }

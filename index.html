@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Annotate</title>
+<link rel="stylesheet" href="src/app.css">
+</head>
+<body>
+<header class="toolbar">
+  <div id="tools" role="toolbar" aria-label="Tools"></div>
+  <label>Color <input id="color" type="color" value="#e53935"></label>
+  <label>Size <input id="size" type="range" min="1" max="10" value="3"></label>
+  <button id="copy" disabled>Copy</button>
+  <output id="status" role="status"></output>
+</header>
+<main id="stage">
+  <p id="hint">Paste an image (Ctrl/⌘+V) to start.</p>
+  <canvas id="canvas"></canvas>
+</main>
+<script src="node_modules/fabric/dist/index.min.js"></script>
+<script src="src/lib/fit.js"></script>
+<script src="src/lib/steps.js"></script>
+<script src="src/lib/history.js"></script>
+<script src="src/app.js"></script>
+<script src="src/input.js"></script>
+<script src="src/style.js"></script>
+<script src="src/export.js"></script>
+<script src="src/tools/box.js"></script>
+</body>
+</html>
