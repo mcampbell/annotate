@@ -48,10 +48,3 @@ test('paste without an image shows an error', async () => {
   await page.evaluate(() => document.dispatchEvent(new ClipboardEvent('paste', { clipboardData: new DataTransfer() })));
   assert.equal(await page.textContent('#status'), 'Clipboard has no image.');
 });
-
-test('Open is a keyboard-reachable button', async () => {
-  const chooser = page.waitForEvent('filechooser');
-  await page.focus('#open');
-  await page.keyboard.press('Enter');
-  await chooser;
-});

@@ -94,3 +94,13 @@ test('second paste replaces image and clears annotations', async () => {
   await pasteImage(page, 800, 600);
   assert.deepEqual(await objects(page), []);
 });
+
+test('touch tap drops', async () => {
+  await browser.close();
+  ({ browser, page, errors } = await open({ hasTouch: true }));
+  await pasteImage(page);
+  await useTool(page, 'box');
+  const box = await page.locator('.upper-canvas').boundingBox();
+  await page.touchscreen.tap(box.x + 100, box.y + 100);
+  assert.equal((await objects(page)).length, 1);
+});

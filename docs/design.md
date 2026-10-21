@@ -25,14 +25,16 @@ Browser image annotator. Paste/upload/drop image, add annotations as movable/res
 
 ```
 index.html            layout, toolbar, style panel, ordered <script> tags
-vendor/fabric.min.js  Fabric.js v6 UMD
+node_modules/fabric   Fabric.js 7 UMD (inlined by build.js)
 src/app.js            Annot namespace, canvas init, registry, active tool, click dispatch, Delete key
 src/input.js          image sources -> Annot.loadImage(blob)
 src/style.js          color/size controls -> new objects + selection
 src/export.js         copy PNG to clipboard
 src/tools/<id>.js     one file per tool
-src/history.js        undo/redo (S7)
-tests.html            console.assert self-checks for pure logic
+src/undo.js           undo/redo wiring (S7)
+src/lib/*.js          pure logic: fit, steps, history
+build.js              inline scripts/CSS into dist/annotate.html
+test/unit, test/e2e   node --test; Playwright + installed Chrome
 ```
 
 Tool contract:
@@ -163,5 +165,7 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 - [x] Build to `dist/annotate.html`
 - [x] E2E tests green
 - [x] Mutation check (12/12 killed)
-- [ ] code-reviewer loop clean
-- [ ] Commit on `annotate-app`
+- [x] code-reviewer loop clean (2 passes, findings fixed)
+- [x] Commit on `annotate-app`
+- [x] README
+- [ ] /okf:okf

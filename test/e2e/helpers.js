@@ -5,9 +5,9 @@ const path = require('node:path');
 
 const url = 'file://' + path.resolve(__dirname, '../../dist/annotate.html');
 
-async function open() {
+async function open(contextOptions = {}) {
   const browser = await chromium.launch({ channel: 'chrome' });
-  const context = await browser.newContext({ viewport: { width: 1200, height: 800 } });
+  const context = await browser.newContext({ viewport: { width: 1200, height: 800 }, ...contextOptions });
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   const page = await context.newPage();
   const errors = [];

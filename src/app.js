@@ -55,14 +55,16 @@
       status('');
       canvas.fire('annot:loaded');
     } catch (err) {
+      if (seq !== loadSeq) return;
       status(`Could not load image: ${err.message ?? err}`, true);
     } finally {
       URL.revokeObjectURL(url);
     }
   }
 
+  // Left button only. Touch events have no button, so `> 0` keeps taps working.
   canvas.on('mouse:down', ({ e, target, scenePoint }) => {
-    if (e.button !== 0 || target || !activeTool || !canvas.backgroundImage) return;
+    if (e.button > 0 || target || !activeTool || !canvas.backgroundImage) return;
     const obj = activeTool.create(scenePoint, Annot.style());
     obj.annotTool = activeTool.id;
     canvas.add(obj);

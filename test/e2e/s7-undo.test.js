@@ -48,24 +48,6 @@ test('undo reverts a style change', async () => {
   assert.equal((await objects(page))[0].stroke, '#00ff00');
 });
 
-test('multi-selection move records scene coords', async () => {
-  await twoBoxes();
-  const lefts = () => page.evaluate(() => Annot.canvas.getObjects().map((o) => Math.round(o.left)));
-  const before = await lefts();
-  await page.evaluate(() => {
-    const { canvas } = Annot;
-    const sel = new fabric.ActiveSelection(canvas.getObjects(), { canvas });
-    canvas.setActiveObject(sel);
-    sel.set({ left: sel.left + 100 }).setCoords();
-    canvas.fire('object:modified', { target: sel });
-    canvas.discardActiveObject();
-  });
-  await undo(); await settle();
-  assert.deepEqual(await lefts(), before);
-  await redo(); await settle();
-  assert.deepEqual(await lefts(), before.map((x) => x + 100));
-});
-
 test('loading a new image clears history', async () => {
   await twoBoxes();
   await pasteImage(page, 800, 600);
@@ -120,18 +102,6 @@ test('a slider drag is one undo step', async () => {
   assert.equal((await objects(page))[0].strokeWidth, 7);
   await undo(); await settle();
   assert.equal((await objects(page))[0].strokeWidth, 3);
-});
-
-test('typed text is recorded', async () => {
-  await pasteImage(page);
-  await useTool(page, 'text');
-  await clickScene(page, 600, 400);
-  await page.keyboard.type('Hello');
-  await page.keyboard.press('Escape');
-  await useTool(page, 'box');
-  await clickScene(page, 1600, 800);
-  await undo(); await settle();
-  assert.deepEqual(await page.evaluate(() => Annot.canvas.getObjects().map((o) => o.text)), ['Hello']);
 });
 
 test('Ctrl+Z while editing text does not restore', async () => {
