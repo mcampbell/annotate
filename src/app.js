@@ -64,7 +64,7 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.target.matches('input, textarea') || !['Delete', 'Backspace'].includes(e.key)) return;
+    if (e.target.matches('textarea') || !['Delete', 'Backspace'].includes(e.key)) return;
     const objects = canvas.getActiveObjects();
     if (!objects.length) return;
     e.preventDefault();
