@@ -4,7 +4,7 @@ title: "Testing"
 description: "How Annotate is tested: Node unit tests for pure logic, Playwright e2e in installed Chrome over file://."
 tags: [testing]
 status: draft
-generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T19:31:00Z' }
+generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T22:00:00Z' }
 sources:
   - id: pkg
     resource: "repo annotate: package.json"
@@ -15,7 +15,7 @@ sources:
 
 * Unit: `npm test` runs `node --test test/unit/*.test.js` over `src/lib/*` and `build.js`.[^pkg]
 * E2E: `npm run test:e2e` builds, then runs `test/e2e/*.test.js` one file at a time with a 60 s per-test timeout. Playwright uses `channel: 'chrome'` (installed Google Chrome), not a downloaded Chromium, and grants clipboard permissions.
-* Helpers in `test/e2e/helpers.js`: a checkerboard PNG maker, `pasteImage` (waits for the expected size), `clickScene` (scene to screen via zoom), `exportedPixel`, and `teardown`, which closes Chrome in a `finally`. An open browser keeps node alive and the run hangs.
+* Helpers in `test/e2e/helpers.js`: a checkerboard PNG maker, `pasteImage` (waits for the expected size), `toScreen` (scene to screen via zoom), `clickScene`, `dragScene` and `dragRect` (press, move in steps, release), `exportedPixel`, and `teardown`, which closes Chrome in a `finally`. An open browser keeps node alive and the run hangs.
 
 # Rules
 
