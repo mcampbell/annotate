@@ -48,7 +48,7 @@ async function pasteImage(page, w = 2400, h = 1600) {
     dt.items.add(new File([bytes], 'x.png', { type: 'image/png' }));
     document.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true }));
   }, b64);
-  await page.waitForFunction(() => Annot.canvas.backgroundImage);
+  await page.waitForFunction(([w, h]) => Annot.canvas.backgroundImage?.width === w && Annot.canvas.backgroundImage.height === h, [w, h]);
 }
 
 async function clickScene(page, x, y) {

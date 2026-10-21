@@ -5,15 +5,18 @@
 
   Annot.style = () => ({ color: color.value, size: Number(size.value) });
 
+  // Live preview on input. Commit on change, so one slider drag is one undo step.
   const applyToSelection = () => {
     const { canvas, tools } = Annot;
     canvas.getActiveObjects().forEach((obj) => {
       tools[obj.annotTool]?.applyStyle(obj, Annot.style());
       obj.setCoords();
-      canvas.fire('object:modified', { target: obj });
     });
     canvas.requestRenderAll();
   };
-  color.addEventListener('input', applyToSelection);
-  size.addEventListener('input', applyToSelection);
+  const commit = () => Annot.canvas.getActiveObjects().forEach((target) => Annot.canvas.fire('object:modified', { target }));
+  [color, size].forEach((input) => {
+    input.addEventListener('input', applyToSelection);
+    input.addEventListener('change', commit);
+  });
 })(globalThis.Annot ??= {});

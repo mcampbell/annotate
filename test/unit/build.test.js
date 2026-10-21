@@ -15,3 +15,6 @@ test('inline replaces stylesheet link', () =>
 
 test('inline leaves other markup alone', () =>
   assert.equal(inline('<p>hi</p><script>x()</script>', read), '<p>hi</p><script>x()</script>'));
+
+test('inline fails loud on a local script it cannot inline', () =>
+  assert.throws(() => inline('<script src="a.js" defer></script>', read), /not inlined/));

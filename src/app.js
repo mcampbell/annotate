@@ -8,11 +8,15 @@
   const stage = document.getElementById('stage');
   const tools = {};
   let activeTool = null;
+  let loadSeq = 0;
 
   const status = (msg, isError = false) => {
     statusEl.textContent = msg;
     statusEl.classList.toggle('error', isError);
   };
+
+  // True while the user types into text: key shortcuts must leave it alone.
+  const isTyping = (e) => e.target.matches?.('textarea') || canvas.getActiveObject()?.isEditing;
 
   const selectTool = (id) => {
     activeTool = tools[id] ?? null;
@@ -34,12 +38,15 @@
   };
 
   async function loadImage(blob) {
+    const seq = ++loadSeq;
     const url = URL.createObjectURL(blob);
     try {
       const img = await fabric.FabricImage.fromURL(url);
+      if (seq !== loadSeq) return; // a newer load started while this one decoded
       img.set({ originX: 'left', originY: 'top', left: 0, top: 0 });
       canvas.clear();
       canvas.backgroundImage = img;
+      // 32 = 2 x #stage padding in app.css.
       const zoom = Annot.fitZoom(img.width, img.height, stage.clientWidth - 32, stage.clientHeight - 32);
       canvas.setDimensions({ width: Math.round(img.width * zoom), height: Math.round(img.height * zoom) });
       canvas.setZoom(zoom);
@@ -54,8 +61,8 @@
     }
   }
 
-  canvas.on('mouse:down', ({ target, scenePoint }) => {
-    if (target || !activeTool || !canvas.backgroundImage) return;
+  canvas.on('mouse:down', ({ e, target, scenePoint }) => {
+    if (e.button !== 0 || target || !activeTool || !canvas.backgroundImage) return;
     const obj = activeTool.create(scenePoint, Annot.style());
     obj.annotTool = activeTool.id;
     canvas.add(obj);
@@ -65,7 +72,7 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.target.matches('textarea') || !['Delete', 'Backspace'].includes(e.key)) return;
+    if (isTyping(e) || !['Delete', 'Backspace'].includes(e.key)) return;
     const objects = canvas.getActiveObjects();
     if (!objects.length) return;
     e.preventDefault();
@@ -75,5 +82,5 @@
 
   addButton('select', 'Select');
   selectTool('select');
-  Object.assign(Annot, { canvas, tools, registerTool, loadImage, status });
+  Object.assign(Annot, { canvas, tools, registerTool, loadImage, status, isTyping });
 })(globalThis.Annot ??= {});

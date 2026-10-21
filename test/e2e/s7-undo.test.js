@@ -69,7 +69,6 @@ test('multi-selection move records scene coords', async () => {
 test('loading a new image clears history', async () => {
   await twoBoxes();
   await pasteImage(page, 800, 600);
-  await page.waitForFunction(() => Annot.canvas.backgroundImage.width === 800);
   await undo(); await settle();
   assert.equal(await count(), 0);
 });
@@ -93,4 +92,54 @@ test('undo/redo restores custom objects with their behavior', async () => {
   assert.deepEqual(restored.map((o) => [o.type, o.text]), [['Step', '1'], ['Step', '2'], ['Blur', undefined]]);
   assert.equal(restored[0].sideControl, false);
   assert.equal(restored[2].objectCaching, false);
+});
+
+test('multi-object delete is one undo step', async () => {
+  await twoBoxes();
+  await page.evaluate(() => {
+    const { canvas } = Annot;
+    canvas.setActiveObject(new fabric.ActiveSelection(canvas.getObjects(), { canvas }));
+  });
+  await page.keyboard.press('Delete');
+  await undo(); await settle();
+  assert.equal(await count(), 2);
+});
+
+test('a slider drag is one undo step', async () => {
+  await pasteImage(page);
+  await useTool(page, 'box');
+  await clickScene(page, 600, 400);
+  await page.evaluate(() => {
+    const size = document.getElementById('size');
+    for (const v of ['4', '5', '6', '7']) {
+      size.value = v;
+      size.dispatchEvent(new Event('input'));
+    }
+    size.dispatchEvent(new Event('change'));
+  });
+  assert.equal((await objects(page))[0].strokeWidth, 7);
+  await undo(); await settle();
+  assert.equal((await objects(page))[0].strokeWidth, 3);
+});
+
+test('typed text is recorded', async () => {
+  await pasteImage(page);
+  await useTool(page, 'text');
+  await clickScene(page, 600, 400);
+  await page.keyboard.type('Hello');
+  await page.keyboard.press('Escape');
+  await useTool(page, 'box');
+  await clickScene(page, 1600, 800);
+  await undo(); await settle();
+  assert.deepEqual(await page.evaluate(() => Annot.canvas.getObjects().map((o) => o.text)), ['Hello']);
+});
+
+test('Ctrl+Z while editing text does not restore', async () => {
+  await pasteImage(page);
+  await useTool(page, 'text');
+  await clickScene(page, 600, 400);
+  await page.keyboard.type('Hi');
+  await page.click('#tools [data-tool="box"]'); // focus leaves the textarea, text still editing
+  await undo(); await page.keyboard.press('Backspace');
+  assert.equal(await count(), 1);
 });

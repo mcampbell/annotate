@@ -6,6 +6,7 @@
     else Annot.status(`Not an image: ${file.name}`, true);
   };
   const input = document.getElementById('file');
+  document.getElementById('open').addEventListener('click', () => input.click());
   input.addEventListener('change', () => {
     load(input.files[0]);
     input.value = '';
@@ -16,7 +17,7 @@
     load(e.dataTransfer.files[0]);
   });
   document.addEventListener('paste', (e) => {
-    if (e.target.matches?.('input, textarea')) return;
+    if (Annot.isTyping(e)) return;
     const file = [...e.clipboardData.files].find((f) => f.type.startsWith('image/'));
     if (!file) return Annot.status('Clipboard has no image.', true);
     e.preventDefault();

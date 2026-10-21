@@ -69,3 +69,28 @@ test('Copy puts a native-size PNG on the clipboard', async () => {
   });
   assert.deepEqual(dims, [2400, 1600]);
 });
+
+test('right-click does not drop', async () => {
+  await pasteImage(page);
+  await useTool(page, 'box');
+  const box = await page.locator('.upper-canvas').boundingBox();
+  await page.mouse.click(box.x + 100, box.y + 100, { button: 'right' });
+  await page.mouse.click(box.x + 100, box.y + 100, { button: 'middle' });
+  assert.deepEqual(await objects(page), []);
+});
+
+test('Copy failure shows an error', async () => {
+  await pasteImage(page);
+  await page.evaluate(() => (navigator.clipboard.write = () => Promise.reject(new Error('denied'))));
+  await page.click('#copy');
+  await page.waitForFunction(() => document.getElementById('status').classList.contains('error'));
+  assert.equal(await page.textContent('#status'), 'Copy failed: denied');
+});
+
+test('second paste replaces image and clears annotations', async () => {
+  await pasteImage(page);
+  await useTool(page, 'box');
+  await clickScene(page, 600, 400);
+  await pasteImage(page, 800, 600);
+  assert.deepEqual(await objects(page), []);
+});

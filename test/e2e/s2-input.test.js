@@ -37,3 +37,21 @@ test('drop of non-image shows error', async () => {
   assert.match(await page.textContent('#status'), /Not an image/);
   assert.equal(await bgSize(), undefined);
 });
+
+test('broken image shows an error', async () => {
+  await page.evaluate(() => Annot.loadImage(new Blob(['x'], { type: 'image/png' })));
+  await page.waitForFunction(() => document.getElementById('status').classList.contains('error'));
+  assert.match(await page.textContent('#status'), /^Could not load image/);
+});
+
+test('paste without an image shows an error', async () => {
+  await page.evaluate(() => document.dispatchEvent(new ClipboardEvent('paste', { clipboardData: new DataTransfer() })));
+  assert.equal(await page.textContent('#status'), 'Clipboard has no image.');
+});
+
+test('Open is a keyboard-reachable button', async () => {
+  const chooser = page.waitForEvent('filechooser');
+  await page.focus('#open');
+  await page.keyboard.press('Enter');
+  await chooser;
+});
