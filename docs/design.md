@@ -168,4 +168,4 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 - [x] code-reviewer loop clean (2 passes, findings fixed)
 - [x] Commit on `annotate-app`
 - [x] README
-- [ ] /okf:okf
+- [x] /okf:okf (`.okf/`, strict-valid)

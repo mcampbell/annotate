@@ -68,5 +68,6 @@ npm run test:e2e    # builds, then runs Playwright against dist/annotate.html in
 | `src/lib/*.js` | Pure logic, unit tested in Node |
 | `build.js` | Inlines scripts and CSS into `dist/annotate.html` |
 | `docs/design.md` | Design and slice plan |
+| `.okf/` | Knowledge bundle (OKF v0.2): architecture, decisions, Fabric 7 pitfalls. Start at `.okf/index.md` |
 
 Each tool registers itself with `Annot.registerTool({ id, label, create, applyStyle, afterDrop? })`. To add a tool, add a file in `src/tools/` and one `<script>` line in `index.html`.
