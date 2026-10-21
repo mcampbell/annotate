@@ -59,7 +59,7 @@ npm run test:e2e    # builds, then runs Playwright against dist/annotate.html in
 | Path | Role |
 |---|---|
 | `index.html` | Page layout, toolbar, script load order |
-| `src/app.js` | Canvas, tool registry, click-to-drop, Delete key, image load |
+| `src/app.js` | Canvas, tool registry, click-to-place and drag-to-draw, Delete key, image load |
 | `src/input.js` | Paste, file picker, drag and drop |
 | `src/style.js` | Color and size panel |
 | `src/export.js` | Copy PNG to clipboard |
@@ -70,4 +70,4 @@ npm run test:e2e    # builds, then runs Playwright against dist/annotate.html in
 | `docs/design.md` | Design and slice plan |
 | `.okf/` | Knowledge bundle (OKF v0.2): architecture, decisions, Fabric 7 pitfalls. Start at `.okf/index.md` |
 
-Each tool registers itself with `Annot.registerTool({ id, label, create, applyStyle, afterDrop? })`. To add a tool, add a file in `src/tools/` and one `<script>` line in `index.html`.
+Each tool registers itself with `Annot.registerTool({ id, label, create, applyStyle, drag?, afterDrop? })`. A tool with `drag` draws by click-drag; without it, a click places it. To add a tool, add a file in `src/tools/` and one `<script>` line in `index.html`.
