@@ -1,13 +1,10 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, pasteImage, clickScene, useTool, exportedPixel } = require('./helpers');
+const { open, teardown, pasteImage, clickScene, useTool, exportedPixel } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
-test.afterEach(async () => {
-  assert.deepEqual(errors, []);
-  await browser.close();
-});
+test.afterEach(() => teardown(browser, errors));
 
 const dropArrow = async () => {
   await pasteImage(page);

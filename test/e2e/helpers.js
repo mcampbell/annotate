@@ -1,4 +1,5 @@
 // Playwright helpers. Runs installed Google Chrome against dist/annotate.html over file://.
+const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
 const path = require('node:path');
 
@@ -13,6 +14,15 @@ async function open() {
   page.on('pageerror', (e) => errors.push(e));
   await page.goto(url);
   return { browser, page, errors };
+}
+
+// Always close Chrome, even when the assert fails. An open browser keeps node alive.
+async function teardown(browser, errors) {
+  try {
+    assert.deepEqual(errors, []);
+  } finally {
+    await browser.close();
+  }
 }
 
 // Checkerboard PNG (10px squares) as base64, made in the page.
@@ -56,4 +66,4 @@ const objects = (page) =>
 const exportedPixel = (page, x, y) =>
   page.evaluate(([x, y]) => [...Annot.toCanvas().getContext('2d').getImageData(x, y, 1, 1).data], [x, y]);
 
-module.exports = { open, makePng, pasteImage, clickScene, useTool, objects, exportedPixel };
+module.exports = { open, teardown, makePng, pasteImage, clickScene, useTool, objects, exportedPixel };

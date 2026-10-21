@@ -1,13 +1,10 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, pasteImage, clickScene, useTool, objects, exportedPixel } = require('./helpers');
+const { open, teardown, pasteImage, clickScene, useTool, objects, exportedPixel } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
-test.afterEach(async () => {
-  assert.deepEqual(errors, []);
-  await browser.close();
-});
+test.afterEach(() => teardown(browser, errors));
 
 test('paste loads image at native size and enables Copy', async () => {
   assert.equal(await page.isDisabled('#copy'), true);

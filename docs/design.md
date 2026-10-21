@@ -154,14 +154,14 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 - [x] Clipboard spike on `file://`
 - [x] Unit tests + pure libs (fit, steps, history, build inline)
 - [x] S1 paste + box + style + delete + copy
-- [ ] S2 upload + drag-drop
-- [ ] S3 arrow
-- [ ] S4 text
-- [ ] S5 step bubbles + renumber
-- [ ] S6 blur / pixelate
-- [ ] S7 undo / redo
+- [x] S2 upload + drag-drop
+- [x] S3 arrow
+- [x] S4 text
+- [x] S5 step bubbles + renumber
+- [x] S6 blur / pixelate
+- [x] S7 undo / redo
 - [x] Build to `dist/annotate.html`
-- [ ] E2E tests green
-- [ ] Mutation check
+- [x] E2E tests green
+- [x] Mutation check (12/12 killed)
 - [ ] code-reviewer loop clean
 - [ ] Commit on `annotate-app`

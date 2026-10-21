@@ -1,13 +1,10 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, makePng } = require('./helpers');
+const { open, teardown, makePng } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
-test.afterEach(async () => {
-  assert.deepEqual(errors, []);
-  await browser.close();
-});
+test.afterEach(() => teardown(browser, errors));
 
 const bgSize = () => page.evaluate(() => Annot.canvas.backgroundImage && [Annot.canvas.backgroundImage.width, Annot.canvas.backgroundImage.height]);
 

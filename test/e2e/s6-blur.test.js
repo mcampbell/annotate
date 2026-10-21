@@ -1,13 +1,10 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, pasteImage, clickScene, useTool, exportedPixel } = require('./helpers');
+const { open, teardown, pasteImage, clickScene, useTool, exportedPixel } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
-test.afterEach(async () => {
-  assert.deepEqual(errors, []);
-  await browser.close();
-});
+test.afterEach(() => teardown(browser, errors));
 
 // Object drops centered on the click: region 500..700 x 340..460.
 const sample = (pts) => Promise.all(pts.map(([x, y]) => exportedPixel(page, x, y)));
@@ -28,7 +25,8 @@ async function dropAndCompare(tool) {
 
 test('pixelate changes region, leaves outside, pixels in a block are equal', async () => {
   await dropAndCompare('pixelate');
-  const [a, b] = await sample([[601, 401], [602, 401]]);
+  // Block size 12 at size 3; block spans x 596..607, y 400..411. Opposite corners must match.
+  const [a, b] = await sample([[597, 401], [606, 410]]);
   assert.deepEqual(a, b);
 });
 

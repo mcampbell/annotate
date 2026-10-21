@@ -1,13 +1,10 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, pasteImage, clickScene, useTool } = require('./helpers');
+const { open, teardown, pasteImage, clickScene, useTool } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
-test.afterEach(async () => {
-  assert.deepEqual(errors, []);
-  await browser.close();
-});
+test.afterEach(() => teardown(browser, errors));
 
 const texts = (page) =>
   page.evaluate(() => Annot.canvas.getObjects().map(({ annotTool, text, fill, fontSize, isEditing }) => ({ annotTool, text, fill, fontSize, isEditing })));
