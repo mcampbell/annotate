@@ -1,6 +1,7 @@
 // Canvas, tool registry, click-to-drop, Delete key, image loading.
 (function (Annot) {
-  fabric.FabricObject.customProperties = ['annotTool'];
+  // Base class: toObject always merges this list, even for subclasses with their own customProperties.
+  fabric.BaseFabricObject.customProperties = ['annotTool'];
   const canvas = new fabric.Canvas('canvas', { width: 0, height: 0, preserveObjectStacking: true });
   const toolbar = document.getElementById('tools');
   const statusEl = document.getElementById('status');

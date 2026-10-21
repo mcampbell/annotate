@@ -76,3 +76,24 @@ test('loading a new image clears history', async () => {
   await undo(); await settle();
   assert.equal(await count(), 0);
 });
+
+test('undo/redo restores custom objects with their behavior', async () => {
+  await pasteImage(page);
+  await useTool(page, 'step');
+  await clickScene(page, 400, 400);
+  await clickScene(page, 800, 400);
+  await useTool(page, 'pixelate');
+  await clickScene(page, 1600, 800);
+  await page.keyboard.press('Delete');
+  await undo(); await settle();
+  const restored = await page.evaluate(() =>
+    Annot.canvas.getObjects().map((o) => ({
+      type: o.constructor.type,
+      text: o.annotTool === 'step' ? o.item(1).text : undefined,
+      sideControl: o.isControlVisible('mt'),
+      objectCaching: o.objectCaching,
+    })));
+  assert.deepEqual(restored.map((o) => [o.type, o.text]), [['Step', '1'], ['Step', '2'], ['Blur', undefined]]);
+  assert.equal(restored[0].sideControl, false);
+  assert.equal(restored[2].objectCaching, false);
+});
