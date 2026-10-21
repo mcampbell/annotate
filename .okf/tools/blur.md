@@ -4,7 +4,7 @@ title: "Blur and Pixelate tools"
 description: "Rect that re-renders the background image region under it, blurred or pixelated."
 tags: [tool]
 status: draft
-generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T19:31:00Z' }
+generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T21:00:00Z' }
 sources:
   - id: src
     resource: "repo annotate: src/tools/blur.js"
@@ -13,7 +13,7 @@ sources:
 
 # Overview
 
-One class, `Blur extends fabric.Rect`, with `mode` (`blur` or `pixelate`) and `strength` (= size) in `customProperties`. Two tools register it: **Blur** and **Pixelate**.[^src]
+One class, `Blur extends fabric.Rect`, with `mode` (`blur` or `pixelate`) and `strength` (= size) in `customProperties`. Two tools register it: **Blur** and **Pixelate**. Both are dragged corner to corner, like Box.[^src]
 
 `_render` reads `canvas.backgroundImage` at the object's scene top-left:
 

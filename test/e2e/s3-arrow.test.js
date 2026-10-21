@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, teardown, pasteImage, clickScene, useTool, exportedPixel } = require('./helpers');
+const { open, teardown, pasteImage, clickScene, dragScene, useTool, exportedPixel } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
@@ -11,7 +11,7 @@ const dropArrow = async () => {
   await page.fill('#color', '#ff0000');
   await page.fill('#size', '6');
   await useTool(page, 'arrow');
-  await clickScene(page, 600, 400);
+  await dragScene(page, 520, 440, 680, 360);
 };
 
 test('arrow drops with 2 point handles and panel style', async () => {

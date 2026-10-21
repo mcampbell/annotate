@@ -5,12 +5,12 @@ Browser app to annotate an image and copy the result to the clipboard as a PNG. 
 ## Features
 
 - **Load an image**: paste (Ctrl/⌘+V), drag and drop a file, or click **Open**.
-- **Tools**: each drops a movable, resizable object on the image.
-  - **Box**: outlined rectangle.
-  - **Arrow**: drag either end to aim it.
+- **Tools**: each makes a movable, resizable object on the image. Box, Arrow, Blur, and Pixelate: click and drag. Step and Text: click.
+  - **Box**: outlined rectangle, corner to corner.
+  - **Arrow**: drag from the foot to the tip. Drag either end later to aim it.
   - **Text**: type when it drops. Double-click to edit again. Empty text is removed.
   - **Step**: numbered bubble. Numbers update when you add or delete a step.
-  - **Blur** and **Pixelate**: hide the part of the image under them. They update live as you move them.
+  - **Blur** and **Pixelate**: drag corner to corner to hide that part of the image. Annotations stay visible. They update live as you move them.
 - **Color** and **Size**: apply to new objects and to the selected object.
 - **Select** tool: click an object to select it. Click empty space to clear the selection.
 - **Delete** or **Backspace**: remove the selected objects.

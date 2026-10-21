@@ -3,9 +3,11 @@ type: Decision
 title: "Click to drop"
 description: "A tool click drops a default-size object; the user then moves and resizes it."
 tags: [decision]
-status: draft
+status: deprecated
 generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T19:31:00Z' }
 ---
+
+> Superseded on 2026-10-21 by [drag-to-draw](/decisions/drag-to-draw.md) for Box, Arrow, Blur, and Pixelate. Step and Text still place on click.
 
 # Decision
 

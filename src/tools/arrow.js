@@ -1,4 +1,4 @@
-// Arrow: 2-point polyline with a filled head at the end. Size = stroke width.
+// Arrow: 2-point polyline, dragged from foot to tip, with a filled head at the tip. Size = stroke width.
 (function (Annot) {
   class Arrow extends fabric.Polyline {
     static type = 'Arrow';
@@ -31,7 +31,11 @@
   Annot.registerTool({
     id: 'arrow',
     label: 'Arrow',
-    create: (p, style) => applyStyle(new Arrow([{ x: p.x - 80, y: p.y + 40 }, { x: p.x + 80, y: p.y - 40 }]), style),
+    create: (p, style) => applyStyle(new Arrow([{ x: p.x, y: p.y }, { x: p.x, y: p.y }]), style),
+    drag: (obj, foot, tip) => {
+      obj.set({ points: [{ x: foot.x, y: foot.y }, { x: tip.x, y: tip.y }] });
+      obj.setBoundingBox(true); // recenter the object on the new points
+    },
     applyStyle,
   });
 })(globalThis.Annot ??= {});

@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { fitZoom } = require('../../src/lib/fit.js');
+const { rectBetween } = require('../../src/lib/geometry.js');
 const { stepNumbers } = require('../../src/lib/steps.js');
 const { history } = require('../../src/lib/history.js');
 
@@ -34,4 +35,11 @@ test('history record after undo drops redo branch', () => {
 test('history record ignores duplicate snapshot', () => {
   const h = history.create('a');
   assert.equal(history.record(h, 'a'), h);
+});
+
+test('rectBetween gives a center-origin rect for any corner order', () => {
+  const rect = { left: 250, top: 200, width: 300, height: 200 };
+  assert.deepEqual(rectBetween({ x: 100, y: 100 }, { x: 400, y: 300 }), rect);
+  assert.deepEqual(rectBetween({ x: 400, y: 300 }, { x: 100, y: 100 }), rect);
+  assert.deepEqual(rectBetween({ x: 400, y: 100 }, { x: 100, y: 300 }), rect);
 });

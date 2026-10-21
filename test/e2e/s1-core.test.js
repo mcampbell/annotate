@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, teardown, pasteImage, clickScene, useTool, objects, exportedPixel } = require('./helpers');
+const { open, teardown, pasteImage, clickScene, dragRect, useTool, objects, exportedPixel } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
@@ -15,12 +15,12 @@ test('paste loads image at native size and enables Copy', async () => {
   assert.equal(await page.isDisabled('#copy'), false);
 });
 
-test('box drops with panel style, click on it selects instead of dropping', async () => {
+test('box drags out with panel style, click on it selects instead of dropping', async () => {
   await pasteImage(page);
   await page.fill('#color', '#00ff00');
   await page.fill('#size', '5');
   await useTool(page, 'box');
-  await clickScene(page, 600, 400);
+  await dragRect(page, 600, 400);
   await clickScene(page, 600, 400);
   assert.deepEqual(await objects(page), [{ annotTool: 'box', stroke: '#00ff00', strokeWidth: 5, fill: 'transparent' }]);
 });
@@ -28,7 +28,7 @@ test('box drops with panel style, click on it selects instead of dropping', asyn
 test('style change applies to selected object', async () => {
   await pasteImage(page);
   await useTool(page, 'box');
-  await clickScene(page, 600, 400);
+  await dragRect(page, 600, 400);
   await page.fill('#color', '#0000ff');
   assert.equal((await objects(page))[0].stroke, '#0000ff');
 });
@@ -43,7 +43,7 @@ test('Select tool click on empty canvas does not drop', async () => {
 test('Delete removes selected object', async () => {
   await pasteImage(page);
   await useTool(page, 'box');
-  await clickScene(page, 600, 400);
+  await dragRect(page, 600, 400);
   await page.keyboard.press('Delete');
   assert.deepEqual(await objects(page), []);
 });
@@ -53,7 +53,7 @@ test('export is native size and contains the box', async () => {
   await page.fill('#color', '#ff0000');
   await page.fill('#size', '6');
   await useTool(page, 'box');
-  await clickScene(page, 600, 400); // box 160x100 centered: left edge x=520
+  await dragRect(page, 600, 400); // box 160x100 centered: left edge x=520
   const [r, g, b] = await exportedPixel(page, 520, 400);
   assert.ok(r > 200 && g < 50 && b < 50, `expected red, got ${[r, g, b]}`);
 });
@@ -90,16 +90,16 @@ test('Copy failure shows an error', async () => {
 test('second paste replaces image and clears annotations', async () => {
   await pasteImage(page);
   await useTool(page, 'box');
-  await clickScene(page, 600, 400);
+  await dragRect(page, 600, 400);
   await pasteImage(page, 800, 600);
   assert.deepEqual(await objects(page), []);
 });
 
-test('touch tap drops', async () => {
+test('touch tap drops a click tool', async () => {
   await browser.close();
   ({ browser, page, errors } = await open({ hasTouch: true }));
   await pasteImage(page);
-  await useTool(page, 'box');
+  await useTool(page, 'step');
   const box = await page.locator('.upper-canvas').boundingBox();
   await page.touchscreen.tap(box.x + 100, box.y + 100);
   assert.equal((await objects(page)).length, 1);

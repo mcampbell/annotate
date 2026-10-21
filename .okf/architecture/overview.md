@@ -4,7 +4,7 @@ title: "Annotate architecture"
 description: "Classic scripts share one globalThis.Annot namespace around a single Fabric canvas."
 tags: [architecture]
 status: draft
-generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T19:31:00Z' }
+generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T21:00:00Z' }
 sources:
   - id: app
     resource: "repo annotate: src/app.js"
@@ -32,7 +32,7 @@ Every source file is a classic `<script>`: an IIFE that reads and extends `globa
 
 1. An image source calls `Annot.loadImage(blob)`. It sets the image as `canvas.backgroundImage` at scene (0,0), natural size, and zooms the canvas to fit. Scene coordinates equal image pixels.
 2. `loadImage` fires the custom canvas event `annot:loaded`. Export enables Copy; undo resets history.
-3. A click with an active tool calls the tool's `create`, tags the object with `annotTool`, and adds it.
+3. A press with an active tool calls the tool's `create` and tags the object with `annotTool`. A click tool adds it at once; a drag tool reshapes it until mouse-up ([tool contract](/architecture/tool-contract.md)).
 4. Undo listens to `object:added`, `object:modified`, `object:removed`.
 
 [^app]: src/app.js

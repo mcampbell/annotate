@@ -145,6 +145,7 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 
 - Default origin in Fabric 7 is `center`: objects drop centered on click.
 - `Select` pseudo-tool (default) so empty-canvas click deselects instead of dropping.
+- Changed after first build (owner request): Box, Arrow, Blur, Pixelate draw by click-drag (start to end); Step and Text stay click-to-place. Drags under 5 screen px make nothing. Tool contract gains optional `drag(obj, start, end)`.
 - Arrow = `Polyline` subclass, 2 points, `controlsUtils.createPolyControls` for endpoint handles.
 - Undo snapshots objects only (not background image). `FabricObject.customProperties = ['annotTool']`.
 - New image load clears annotations and history.

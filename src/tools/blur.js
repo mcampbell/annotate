@@ -45,11 +45,8 @@
     Annot.registerTool({
       id,
       label,
-      create: (point, style) =>
-        applyStyle(
-          new Blur({ left: point.x, top: point.y, width: 200, height: 120, mode }),
-          style,
-        ),
+      create: (point, style) => applyStyle(new Blur({ mode }), style),
+      drag: (obj, start, end) => obj.set(Annot.rectBetween(start, end)),
       applyStyle,
     });
   tool('blur', 'Blur', 'blur');

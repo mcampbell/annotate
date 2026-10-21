@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, teardown, pasteImage, clickScene, useTool, objects } = require('./helpers');
+const { open, teardown, pasteImage, clickScene, dragRect, useTool, objects } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
@@ -14,8 +14,8 @@ const settle = () => page.waitForFunction(() => !Annot.undoBusy());
 async function twoBoxes() {
   await pasteImage(page);
   await useTool(page, 'box');
-  await clickScene(page, 400, 400);
-  await clickScene(page, 1200, 400);
+  await dragRect(page, 400, 400);
+  await dragRect(page, 1200, 400);
 }
 
 test('undo and redo object adds', async () => {
@@ -32,7 +32,7 @@ test('undo restores a deleted object with its style', async () => {
   await pasteImage(page);
   await page.fill('#color', '#00ff00');
   await useTool(page, 'box');
-  await clickScene(page, 600, 400);
+  await dragRect(page, 600, 400);
   await page.keyboard.press('Delete');
   await undo(); await settle();
   assert.deepEqual((await objects(page)).map((o) => o.stroke), ['#00ff00']);
@@ -42,7 +42,7 @@ test('undo reverts a style change', async () => {
   await pasteImage(page);
   await page.fill('#color', '#00ff00');
   await useTool(page, 'box');
-  await clickScene(page, 600, 400);
+  await dragRect(page, 600, 400);
   await page.fill('#color', '#0000ff');
   await undo(); await settle();
   assert.equal((await objects(page))[0].stroke, '#00ff00');
@@ -61,7 +61,7 @@ test('undo/redo restores custom objects with their behavior', async () => {
   await clickScene(page, 400, 400);
   await clickScene(page, 800, 400);
   await useTool(page, 'pixelate');
-  await clickScene(page, 1600, 800);
+  await dragRect(page, 1600, 800, 200, 120);
   await page.keyboard.press('Delete');
   await undo(); await settle();
   const restored = await page.evaluate(() =>
@@ -90,7 +90,7 @@ test('multi-object delete is one undo step', async () => {
 test('a slider drag is one undo step', async () => {
   await pasteImage(page);
   await useTool(page, 'box');
-  await clickScene(page, 600, 400);
+  await dragRect(page, 600, 400);
   await page.evaluate(() => {
     const size = document.getElementById('size');
     for (const v of ['4', '5', '6', '7']) {

@@ -51,11 +51,24 @@ async function pasteImage(page, w = 2400, h = 1600) {
   await page.waitForFunction(([w, h]) => Annot.canvas.backgroundImage?.width === w && Annot.canvas.backgroundImage.height === h, [w, h]);
 }
 
-async function clickScene(page, x, y) {
+// Scene (image pixel) coords to screen coords.
+async function toScreen(page, x, y) {
   const box = await page.locator('.upper-canvas').boundingBox();
   const zoom = await page.evaluate(() => Annot.canvas.getZoom());
-  await page.mouse.click(box.x + x * zoom, box.y + y * zoom);
+  return [box.x + x * zoom, box.y + y * zoom];
 }
+
+const clickScene = async (page, x, y) => page.mouse.click(...(await toScreen(page, x, y)));
+
+async function dragScene(page, x1, y1, x2, y2) {
+  await page.mouse.move(...(await toScreen(page, x1, y1)));
+  await page.mouse.down();
+  await page.mouse.move(...(await toScreen(page, x2, y2)), { steps: 5 });
+  await page.mouse.up();
+}
+
+// Drag out a w x h rect centered on (x, y).
+const dragRect = (page, x, y, w = 160, h = 100) => dragScene(page, x - w / 2, y - h / 2, x + w / 2, y + h / 2);
 
 const useTool = (page, id) => page.click(`#tools [data-tool="${id}"]`);
 
@@ -66,4 +79,4 @@ const objects = (page) =>
 const exportedPixel = (page, x, y) =>
   page.evaluate(([x, y]) => [...Annot.toCanvas().getContext('2d').getImageData(x, y, 1, 1).data], [x, y]);
 
-module.exports = { open, teardown, makePng, pasteImage, clickScene, useTool, objects, exportedPixel };
+module.exports = { open, teardown, makePng, pasteImage, toScreen, clickScene, dragScene, dragRect, useTool, objects, exportedPixel };

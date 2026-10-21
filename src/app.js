@@ -1,4 +1,4 @@
-// Canvas, tool registry, click-to-drop, Delete key, image loading.
+// Canvas, tool registry, click-to-place and drag-to-draw, Delete key, image loading.
 (function (Annot) {
   // Base class: toObject always merges this list, even for subclasses with their own customProperties.
   fabric.BaseFabricObject.customProperties = ['annotTool'];
@@ -9,6 +9,8 @@
   const tools = {};
   let activeTool = null;
   let loadSeq = 0;
+  let drawing = null; // { tool, obj, start } while a drag tool draws
+  const MIN_DRAG_PX = 5; // shorter drags are clicks: they make nothing
 
   const status = (msg, isError = false) => {
     statusEl.textContent = msg;
@@ -65,11 +67,40 @@
   // Left button only. Touch events have no button, so `> 0` keeps taps working.
   canvas.on('mouse:down', ({ e, target, scenePoint }) => {
     if (e.button > 0 || target || !activeTool || !canvas.backgroundImage) return;
-    const obj = activeTool.create(scenePoint, Annot.style());
-    obj.annotTool = activeTool.id;
+    const tool = activeTool;
+    const obj = tool.create(scenePoint, Annot.style());
+    obj.annotTool = tool.id;
+    if (tool.drag) {
+      obj.excludeFromExport = true; // keeps it out of undo snapshots until the drag commits
+      tool.drag(obj, scenePoint, scenePoint);
+      drawing = { tool, obj, start: scenePoint };
+      canvas.add(obj);
+      return;
+    }
     canvas.add(obj);
     canvas.setActiveObject(obj);
-    activeTool.afterDrop?.(obj);
+    tool.afterDrop?.(obj);
+    canvas.requestRenderAll();
+  });
+
+  canvas.on('mouse:move', ({ scenePoint }) => {
+    if (!drawing) return;
+    drawing.tool.drag(drawing.obj, drawing.start, scenePoint);
+    drawing.obj.setCoords();
+    canvas.requestRenderAll();
+  });
+
+  canvas.on('mouse:up', ({ scenePoint }) => {
+    if (!drawing) return;
+    const { obj, start } = drawing;
+    drawing = null;
+    if (Math.hypot(scenePoint.x - start.x, scenePoint.y - start.y) * canvas.getZoom() < MIN_DRAG_PX) {
+      canvas.remove(obj);
+      return;
+    }
+    obj.excludeFromExport = false;
+    canvas.setActiveObject(obj);
+    canvas.fire('object:modified', { target: obj });
     canvas.requestRenderAll();
   });
 
