@@ -20,7 +20,7 @@ One class, `Blur extends fabric.Rect`, with `mode` (`blur` or `pixelate`) and `s
 * pixelate: draw the region into a small canvas (block = `strength * 4` px), draw it back with `imageSmoothingEnabled = false`.
 * blur: clip to the rect, `ctx.filter = blur(strength * 2 px)`, draw the region with a margin.
 
-`objectCaching: false` so it updates live as it moves. Rotation and flip are locked. It hides only the image; annotations under it stay visible.
+`objectCaching: false` so it updates live as it moves. Rotation and flip are locked. By design it hides only the image: annotations under it stay visible. The owner prefers this; do not change it.
 
 See the [tool contract](/architecture/tool-contract.md).
 

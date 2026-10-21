@@ -100,7 +100,7 @@ Run order. S2-S6 can run as parallel work streams after S1.
   - pixelate: draw region at `1/size` scale to offscreen canvas, draw back with `imageSmoothingEnabled = false`.
   - blur: `ctx.filter = 'blur(<size>px)'`.
 - Mode toggle (blur vs pixelate) on the object. Live: re-renders as it moves.
-- Covers base image only. Annotations under it stay visible. Deferred edge case.
+- Covers base image only. Annotations under it stay visible. Intended: owner prefers this.
 - Region math (bounds -> source rect at native res) as pure function -> assert in `tests.html`.
 
 ### S7 - undo / redo
@@ -129,7 +129,6 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 
 ## Deferred edge cases
 
-- Blur over other annotations.
 - Images larger than Chrome max canvas size (~16k px side). Fail loud only.
 - Multiple images in one paste: first wins.
 - Rotation: Fabric gives it free. Not tested for arrow/blur.
