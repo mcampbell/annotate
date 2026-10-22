@@ -105,6 +105,17 @@ test('a spin then an immediate deselect is still one undo step', async () => {
   assert.deepEqual((await objects(page)).map((o) => o.strokeWidth), [3]);
 });
 
+// The spin has not committed yet: undo must commit it first, then undo it, not the step before.
+test('undo right after a spin undoes the spin', async () => {
+  await useTool(page, 'box');
+  await dragRect(page, 1200, 800);
+  await selectFirst();
+  await wheel(-120, 2);
+  await page.keyboard.press('ControlOrMeta+z');
+  await page.waitForFunction(() => !Annot.undoBusy());
+  assert.deepEqual((await objects(page)).map((o) => o.strokeWidth), [3]);
+});
+
 test('Ctrl + wheel leaves the slider', async () => {
   await useTool(page, 'box');
   await page.keyboard.down('Control');
