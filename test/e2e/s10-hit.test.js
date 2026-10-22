@@ -59,8 +59,8 @@ test('a box restored by undo still lets interior clicks through', async () => {
 
 test('a click 3 screen px inside a size 1 outline selects the box', async () => {
   await pasteImage(page);
-  await page.fill('#size', '1');
   await useTool(page, 'box');
+  await page.fill('#size', '1');
   await dragScene(page, 100, 100, 400, 300);
   await useTool(page, 'select');
   await clickScene(page, 250, 200);
@@ -94,8 +94,8 @@ test('Select: a click on the arrow line selects the arrow', async () => {
 // A uniform stroke stays 10 px (943.5..953.5). A scaled stroke would be 20 px (938.5..958.5) and cover x = 955.
 test('a scaled box keeps its stroke width', async () => {
   await pasteImage(page);
-  await page.fill('#size', '10');
   await useTool(page, 'box');
+  await page.fill('#size', '10');
   await dragScene(page, 1000, 600, 1100, 700);
   await page.evaluate(() => Annot.canvas.getActiveObject().set({ scaleX: 2, scaleY: 2 }));
   const [r, g, b] = await exportedPixel(page, 955, 650);
@@ -106,8 +106,8 @@ test('a scaled box keeps its stroke width', async () => {
 
 test('a click 10 screen px inside a size 1 outline selects nothing', async () => {
   await pasteImage(page);
-  await page.fill('#size', '1');
   await useTool(page, 'box');
+  await page.fill('#size', '1');
   await dragScene(page, 100, 100, 400, 300);
   await useTool(page, 'select');
   await clickScene(page, 250, 200);

@@ -18,8 +18,8 @@ const dropText = async () => {
 test('drop text enters editing; typing replaces text and uses panel style', async () => {
   await pasteImage(page);
   await page.fill('#color', '#00ff00');
-  await page.fill('#size', '5');
   await useTool(page, 'text');
+  await page.fill('#size', '5');
   await clickScene(page, 600, 400);
   assert.equal((await texts(page))[0].isEditing, true);
   await page.keyboard.type('Hello');

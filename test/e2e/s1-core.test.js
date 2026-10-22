@@ -18,8 +18,8 @@ test('paste loads image at native size and enables Copy', async () => {
 test('box drags out with panel style, click on it selects instead of dropping', async () => {
   await pasteImage(page);
   await page.fill('#color', '#00ff00');
-  await page.fill('#size', '5');
   await useTool(page, 'box');
+  await page.fill('#size', '5');
   await dragRect(page, 600, 400);
   await clickScene(page, 600, 400);
   assert.deepEqual(await objects(page), [{ annotTool: 'box', stroke: '#00ff00', strokeWidth: 5, fill: 'transparent' }]);
@@ -51,8 +51,8 @@ test('Delete removes selected object', async () => {
 test('export is native size and contains the box', async () => {
   await pasteImage(page);
   await page.fill('#color', '#ff0000');
-  await page.fill('#size', '6');
   await useTool(page, 'box');
+  await page.fill('#size', '6');
   await dragRect(page, 600, 400); // box 160x100 centered: left edge x=520
   const [r, g, b] = await exportedPixel(page, 520, 400);
   assert.ok(r > 200 && g < 50 && b < 50, `expected red, got ${[r, g, b]}`);

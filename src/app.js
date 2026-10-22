@@ -27,6 +27,7 @@
     canvas.selection = !activeTool;
     canvas.defaultCursor = activeTool ? 'crosshair' : 'default';
     toolbar.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.tool === id));
+    canvas.fire('annot:tool', { id });
   };
 
   const addButton = (id, label, key) => {
@@ -141,5 +142,5 @@
 
   addButton('select', 'Select', 'v');
   selectTool('select');
-  Object.assign(Annot, { canvas, tools, registerTool, loadImage, status, isTyping });
+  Object.assign(Annot, { activeTool: () => activeTool?.id ?? null, canvas, tools, registerTool, loadImage, status, isTyping });
 })(globalThis.Annot ??= {});
