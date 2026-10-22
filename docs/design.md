@@ -65,6 +65,9 @@ Run order. S2-S6 can run as parallel work streams after S1.
 | S7 | Undo / redo | by error-handling depth | Recover from mistakes | history.js, + serialization in arrow/step/blur |
 | S9 | Tool hotkeys | by input (keyboard) | Pick a tool without the mouse | app.js, tools/*.js |
 | S10 | Outline-only hit for Box and Arrow | by business case | Draw inside a box or near an arrow without selecting it | app.js, tools/box.js, tools/arrow.js |
+| S11 | Wheel changes size | by input (wheel) | Resize without the slider | style.js |
+| S12 | Slider shows the selected object's size | by business case | See and adjust the size of what you selected | style.js, app.js |
+| S13 | Size per tool | by business case | Each tool keeps its own size | style.js, app.js |
 
 ### S1 - skeleton
 
@@ -185,6 +188,74 @@ Deferred edge cases (S10):
 - A press just outside the outline misses: Fabric checks the bounding box before the pixel check. Fix if it irritates: Box `padding` in screen px. Cost: the selection frame draws that far out. Owner: no padding now (2026-10-22).
 - Hit-test cost: Fabric renders the object once per hover hit-test inside its bounding box. Box and Arrow render cheaply. Not measured.
 
+### S11 - wheel changes size
+
+Added 2026-10-22. Run order: S11, S12, and S13 run in parallel (conflicts C3, C4).
+
+The wheel moves the size slider, the same as a user drag. The slider stays in sync by construction: it is the one store of the size.
+
+Target (owner rule):
+- An object is selected: the wheel changes its size, and the slider. The selected object wins over the active tool.
+- Else a drawing tool is active: the wheel changes the slider, so the next object uses it. With S13, that is the active tool's own size.
+- Else (Select tool, nothing selected): the wheel does nothing.
+
+Decisions (mine):
+- One `wheel` listener on `#stage` in `style.js`, `{ passive: false }`. It acts only for the target above, and only then calls `preventDefault`.
+- `ctrlKey` wheel is a trackpad pinch: ignore it, so browser zoom still works.
+- Mouse: one step per wheel event (owner choice). Trackpad: add `deltaY` to an accumulator, one step per `STEP_PX` (100) of travel.
+- Mouse or trackpad: an event whose `wheelDeltaY` is a non-zero multiple of 120 is a mouse notch. Unverified on the owner's Mac. A hands-on check with the owner's mouse and trackpad is part of the slice.
+- Direction: `deltaY < 0` is up and calls `size.stepUp()`; else `size.stepDown()`. Natural scrolling is off on the owner's Mac (`com.apple.swipescrolldirection = 0`). The native range clamps to 1..10. After each step, dispatch `input`: the existing handler applies it to the selection live.
+- `app.js` exports `Annot.activeTool()`, the active tool id, or `null` for Select.
+- One undo step per spin: 300 ms after the last wheel event, dispatch `change` (the existing commit fires `object:modified`) and reset the accumulator.
+
+E2E cases (`test/e2e/s11-wheel.test.js`, `page.mouse.wheel` over the stage):
+- Box tool, nothing selected: wheel up 100 -> slider 4. Wheel down 200 -> slider 2.
+- Clamp: 20 notches up -> slider 10. 20 down -> slider 1.
+- Select tool, nothing selected: wheel up -> slider unchanged.
+- Box selected: wheel up 100 -> slider 4 and box `strokeWidth` 4.
+- Mouse: one event of `deltaY -120` -> slider 4. Trackpad: 10 events of `deltaY -10` -> slider 4.
+- One spin of 3 notches on a selected box, wait 400 ms, undo once -> `strokeWidth` back to 3.
+- Ctrl + wheel -> slider unchanged.
+- Wheel over the toolbar -> slider unchanged.
+
+Deferred edge cases (S11):
+- Wheel during a drag: changes the slider only; the preview keeps its size until the next object.
+- Wheel while editing text: resizes the text live. Accepted.
+- Firefox line-mode deltas: Chrome only, so not handled.
+
+### S12 - slider shows the selected object's size
+
+Size maps to different properties per tool, and some maps lose data ([tools](/.okf/tools/index.md)). A Step resize handle changes `scale`, which also carries size. So read the size from a stored value, not from the object's geometry.
+
+Decisions (mine):
+- New custom property `annotSize`. Add it to `fabric.BaseFabricObject.customProperties` in `app.js`, so undo keeps it.
+- Set it where size is applied: in `app.js` on create (`obj.annotSize = style.size`, beside `annotTool`), and in `style.js` `applyToSelection`.
+- On `selection:created` and `selection:updated`: if every selected object has the same `annotSize`, set `size.value` to it. Mixed sizes: leave the slider. Set the value only, with no `input` event, so the selection does not restyle itself.
+- Color stays as it is. The owner asked for size only.
+
+### S13 - size per tool
+
+Owner answers (2026-10-22): each tool keeps its own size. Editing a selected object changes only that object. Sizes reset on reload.
+
+Decisions (mine):
+- `style.js` keeps `sizes` (tool id -> size) in memory. Every tool starts at the slider default (`size.defaultValue`, 3).
+- `app.js` `selectTool` fires `canvas.fire('annot:tool', { id })`. `style.js` listens: when nothing is selected, it sets `size.value` to the new tool's size.
+- On slider `input` (user or wheel) with nothing selected and a drawing tool active, `sizes[Annot.activeTool()] = size.value`.
+- On `selection:cleared`, `size.value` returns to the active tool's size. So after an object edit the slider shows the tool's size again.
+- Select has no size. With Select active and nothing selected, the slider keeps its value and stores nothing.
+
+E2E cases (`test/e2e/s13-tool-size.test.js`):
+- Box, slider to 7; Text, slider to 2; Box again -> slider 7; Text again -> slider 2.
+- Box at 7 draws a box with `strokeWidth` 7 after a detour to Text at 2.
+- Box at 7, select an object of size 4 and change it to 5, deselect -> slider 7.
+- With an object selected, a tool key changes the tool but the slider keeps the object's size.
+
+E2E cases (`test/e2e/s12-select-size.test.js`):
+- Box at size 7, slider moved to 2, click the box outline -> slider 7.
+- Step at size 2, then Box at size 8 selected, then click the step -> slider 2.
+- Two objects of size 4 selected together -> slider 4. Sizes 4 and 6 -> slider unchanged.
+- Box at size 7, undo then redo, select it -> slider 7.
+
 ## Expected merge conflicts
 
 | ID | Where | Cause | Slices |
@@ -193,6 +264,9 @@ Deferred edge cases (S10):
 | C2 | `src/input.js` | S2 edits paste-only file from S1 | S2 vs any S1 fix |
 | - | none | S9 is one slice, no parallel stream | S9 |
 | - | none | S10 is one slice, no parallel stream | S10 |
+| C3 | `src/style.js` | S11 adds the wheel listener; S12 adds `annotSize` in `applyToSelection` and a selection listener; S13 adds `sizes` and tool and clear listeners | S11, S12, S13 |
+| C4 | `src/app.js` | S11 adds `activeTool` to the `Object.assign` export; S12 adds `annotSize` to `customProperties` and on create; S13 fires `annot:tool` in `selectTool` | S11, S12, S13 |
+| C5 | `README.md`, `.okf/modules/style-panel.md` | each slice adds its own docs line | S11, S12, S13 |
 
 C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 
@@ -204,6 +278,7 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 | R2 | S5 renumber must stay correct under S7 reload | Event-driven renumber; verify again in S7 |
 | - | none for S9 | one slice |
 | - | none for S10 | one slice |
+| - | none for S11, S12 | the wheel goes through the slider `input` event, so S12's `annotSize` update covers wheel changes with no S11 rework |
 
 ## Deferred edge cases
 
@@ -251,3 +326,8 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 - [x] S9 README key table + `.okf/` sync
 - [x] S10 outline-only hit for Box and Arrow (`app.js`, `tools/box.js`, `tools/arrow.js`, `test/e2e/s10-hit.test.js`)
 - [x] S10 README + `.okf/` sync
+- [ ] S11 wheel changes size (`style.js`, `test/e2e/s11-wheel.test.js`)
+- [ ] S12 slider shows selected size (`style.js`, `app.js`, `test/e2e/s12-select-size.test.js`)
+- [ ] S13 size per tool (`style.js`, `app.js`, `test/e2e/s13-tool-size.test.js`)
+- [ ] S11 hands-on wheel check with the owner's mouse and trackpad
+- [ ] S11-S13 README + `.okf/` sync

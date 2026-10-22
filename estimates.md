@@ -53,3 +53,19 @@ Relative within session 2026-10-22. S9 = 1 point.
 | Rework | none | 0 |
 
 **Total: 1 point**
+
+## S11 wheel size, S12 slider follows selection (2026-10-22)
+
+Relative within session 2026-10-22. S9 = 1, S10 = 1.
+
+| Item | Size | Points |
+|---|---|---|
+| S11 Wheel changes size (target rule, accumulator, debounced commit, E2E with timing) | medium | 2 |
+| S12 Slider shows selected size (`annotSize`, selection listener, E2E) | easy | 1 |
+| S13 Size per tool (`sizes`, `annot:tool` event, clear restore, E2E) | easy | 1 |
+| C3 `src/style.js`, three-way S11/S12/S13 | easy | 1 |
+| C4 `src/app.js`, three-way S11/S12/S13 (one line each) | trivial | 0.5 |
+| C5 `README.md`, `.okf/modules/style-panel.md`, three-way docs lines | trivial | 0.5 |
+| Rework | none | 0 |
+
+**Total: 6 points** (slices 4, conflicts 2)

@@ -2,7 +2,7 @@
 
 Design: `docs/design.md`
 
-S1-S7 are done (see the Tasks list in the design doc). This file covers S9 and S10.
+S1-S7 are done (see the Tasks list in the design doc). This file covers S9 to S13.
 
 ## Slice 9: Tool hotkeys
 
@@ -74,6 +74,73 @@ Run the tasks in order. T10.1 and T10.2 both edit `test/e2e/s10-hit.test.js`.
   - Options: none
   - Done when: `grep -n "outline" README.md` finds the new line. The OKF validator reports the bundle as conformant under `--strict`. The `docs/design.md` S10 items are ticked.
 
+## Slice 11: Wheel changes size
+
+S11, S12, and S13 run in parallel. Expected conflicts: C3 (`src/style.js`), C4 (`src/app.js`), C5 (`README.md`, `.okf/modules/style-panel.md`). See `docs/design.md`.
+
+- [ ] **T11.1: Wheel handler**
+  - Why: S11 value. The user changes the size with the wheel, as if they moved the slider, and the slider shows it.
+  - Where: `src/style.js` (new `wheel` listener on `#stage`), `src/app.js` (`Object.assign(Annot, ...)` at line 144: add `activeTool`), new `test/e2e/s11-wheel.test.js`
+  - What:
+    1. `app.js`: export `Annot.activeTool = () => activeTool?.id ?? null`.
+    2. `style.js`: add a `wheel` listener on `#stage` with `{ passive: false }`. Return on `ctrlKey`. Target: a selection exists, or `Annot.activeTool()` is not null. Else return, with no `preventDefault`.
+    3. Mouse notch (`wheelDeltaY` a non-zero multiple of 120): one step per event. Else add `deltaY` to an accumulator, one step per `STEP_PX = 100`.
+    4. A step: `deltaY < 0` calls `size.stepUp()`, else `size.stepDown()`. Then dispatch `input`.
+    5. 300 ms after the last wheel event: dispatch `change` and reset the accumulator.
+  - Options: If Playwright's `page.mouse.wheel` gives no `wheelDeltaY` that is a multiple of 120, dispatch a synthetic `WheelEvent` in the test, or move the mouse check into a small function and give it a unit test. Record the choice here.
+  - Done when: `npm run test:e2e` passes, with the S11 cases from `docs/design.md` in `s11-wheel.test.js`: tool up and down, clamp at 1 and 10, Select with nothing selected unchanged, selected box resized, mouse event, trackpad events, one undo per spin, Ctrl+wheel unchanged, wheel over the toolbar unchanged.
+
+- [ ] **T11.2: Hands-on wheel check**
+  - Why: S11 value depends on the mouse check and the 100 px trackpad step, which no test can confirm on real hardware.
+  - Where: `dist/annotate.html`, the owner's mouse and trackpad
+  - What: Build. Ask the owner to open the build, pick Box, and (1) turn the wheel one notch up and one notch down, and (2) swipe two fingers slowly up on the trackpad. If a notch gives 0 or 2 steps, or the trackpad jumps, add a temporary `console.log` of `deltaY` and `wheelDeltaY`, get the values from the owner, and fix the check or `STEP_PX`.
+  - Options: none
+  - Done when: the owner confirms that one notch is one size step in each direction, and that a slow trackpad swipe changes the size steadily.
+
+- [ ] **T11.3: S11 docs**
+  - Why: The README and OKF describe the wheel.
+  - Where: `README.md` (feature list), `.okf/modules/style-panel.md`
+  - What: Add the wheel rule (selected object, else active tool, else nothing), mouse and trackpad steps, and one undo step per spin.
+  - Options: none
+  - Done when: `grep -n -i "wheel" README.md .okf/modules/style-panel.md` finds both. The OKF validator reports the bundle as conformant under `--strict`.
+
+## Slice 12: Slider shows the selected object's size
+
+- [ ] **T12.1: Store and show annotSize**
+  - Why: S12 value. The user sees the size of the object they select, and the slider stays in sync with it.
+  - Where: `src/app.js` (line 4 `customProperties`; line 84 beside `obj.annotTool = tool.id`), `src/style.js` (`applyToSelection`; new `selection:created` and `selection:updated` listener), new `test/e2e/s12-select-size.test.js`
+  - What: Add `'annotSize'` to `customProperties`. Set `obj.annotSize` on create and in `applyToSelection`. On `selection:created` and `selection:updated`, if all selected objects have one `annotSize`, set `size.value` to it with no `input` event. Mixed sizes: leave the slider.
+  - Options: none
+  - Done when: `npm run test:e2e` passes, with the S12 cases from `docs/design.md` in `s12-select-size.test.js`: select shows size, switch between objects, same and mixed multi-select, undo and redo keep `annotSize`.
+
+- [ ] **T12.2: S12 docs**
+  - Why: The README and OKF describe the slider sync.
+  - Where: `README.md` (Color and Size line), `.okf/modules/style-panel.md`, `.okf/modules/undo-redo.md` (custom properties)
+  - What: State that selecting objects of one size moves the slider to that size. Record `annotSize` as a serialized custom property.
+  - Options: none
+  - Done when: `grep -n "annotSize" .okf/modules/*.md` finds it. The OKF validator reports the bundle as conformant under `--strict`.
+
+## Slice 13: Size per tool
+
+- [ ] **T13.1: Per-tool sizes**
+  - Why: S13 value. Each tool keeps its own size, so switching tools does not lose a size the user set.
+  - Where: `src/app.js` (`selectTool`, line 25), `src/style.js`, new `test/e2e/s13-tool-size.test.js`
+  - What:
+    1. `app.js` `selectTool`: `canvas.fire('annot:tool', { id })`.
+    2. `style.js`: keep `sizes` (tool id -> size). On `annot:tool` with nothing selected, set `size.value` to `sizes[id] ?? size.defaultValue`.
+    3. On slider `input` with nothing selected and `Annot.activeTool()` not null, store `sizes[Annot.activeTool()]`.
+    4. On `selection:cleared`, set `size.value` back to the active tool's size.
+    5. If S11 has not landed yet, add `Annot.activeTool` in `app.js` exactly as in T11.1 (conflict C4).
+  - Options: none
+  - Done when: `npm run test:e2e` passes, with the S13 cases from `docs/design.md` in `s13-tool-size.test.js`: sizes kept per tool, a new object uses its tool's size, deselect restores the tool's size, a tool key with a selection keeps the object's size.
+
+- [ ] **T13.2: S13 docs**
+  - Why: The README and OKF describe per-tool size.
+  - Where: `README.md` (Color and Size line), `.okf/modules/style-panel.md`, `docs/design.md` Tasks list
+  - What: State that each tool keeps its own size until reload. Tick S11 to S13 in `docs/design.md` once all three have landed.
+  - Options: none
+  - Done when: `grep -n -i "each tool keeps" README.md` finds the line. The OKF validator reports the bundle as conformant under `--strict`. The `docs/design.md` S11 to S13 items are ticked.
+
 ## Questions and answers
 
 - Q (T9.2): What should a key press during a drag do?
@@ -86,3 +153,13 @@ Run the tasks in order. T10.1 and T10.2 both edit `test/e2e/s10-hit.test.js`.
   A: No padding now. Add it later if the miss is a problem.
 - Q (general): Which objects get outline-only hit?
   A: Box and Arrow. Blur, Pixelate, Step, and Text keep bounding-box hit.
+- Q (T11.1): Is macOS natural scrolling on?
+  A: Off, read from the system (`com.apple.swipescrolldirection = 0`). `deltaY < 0` is wheel up.
+- Q (general): One shared size, or a size per tool?
+  A: A size per tool. This added S13.
+- Q (T13.1): With an object selected, does a size change also set the tool's size?
+  A: No. It changes only the object. Deselect returns the slider to the tool's size.
+- Q (T13.1): Keep the tool sizes across a reload?
+  A: No. They reset on reload.
+- Q (T11.1, T11.2): How to step for a mouse wheel?
+  A: One step per wheel event for a mouse. The trackpad adds up 100 px per step. The mouse check is unverified, so T11.2 checks it on the owner's hardware.
