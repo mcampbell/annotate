@@ -30,6 +30,7 @@
   Annot.registerTool({
     id: 'step',
     label: 'Step',
+    key: 'n',
     create: (point, style) =>
       applyStyle(
         new Step(

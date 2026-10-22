@@ -7,6 +7,7 @@
   const statusEl = document.getElementById('status');
   const stage = document.getElementById('stage');
   const tools = {};
+  const keys = {}; // key -> tool id
   let activeTool = null;
   let loadSeq = 0;
   let drawing = null; // { tool, obj, start } while a drag tool draws
@@ -27,8 +28,11 @@
     toolbar.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.tool === id));
   };
 
-  const addButton = (id, label) => {
-    const button = Object.assign(document.createElement('button'), { textContent: label });
+  const addButton = (id, label, key) => {
+    if (keys[key]) throw new Error(`Tool ${id}: key "${key}" is taken by ${keys[key]}`);
+    keys[key] = id;
+    const button = Object.assign(document.createElement('button'), { textContent: label, title: `${label} (${key.toUpperCase()})` });
+    button.setAttribute('aria-keyshortcuts', key.toUpperCase());
     button.dataset.tool = id;
     button.addEventListener('click', () => selectTool(id));
     toolbar.append(button);
@@ -36,7 +40,7 @@
 
   const registerTool = (tool) => {
     tools[tool.id] = tool;
-    addButton(tool.id, tool.label);
+    addButton(tool.id, tool.label, tool.key);
   };
 
   async function loadImage(blob) {
@@ -119,10 +123,22 @@
     canvas.remove(...objects);
   });
 
+  // Tool keys. Mid-drag, only Escape acts: it cancels the drag but keeps the tool,
+  // because Select would turn on Fabric's box selection under the held mouse button.
+  document.addEventListener('keydown', (e) => {
+    if (isTyping(e) || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (drawing) {
+      if (e.key === 'Escape') cancelDrawing();
+      return;
+    }
+    const id = e.key === 'Escape' ? 'select' : keys[e.key.toLowerCase()];
+    if (id) selectTool(id);
+  });
+
   // Fabric has no touchcancel path, so a cancelled touch would never fire mouse:up.
   canvas.upperCanvasEl.addEventListener('touchcancel', cancelDrawing);
 
-  addButton('select', 'Select');
+  addButton('select', 'Select', 'v');
   selectTool('select');
   Object.assign(Annot, { canvas, tools, registerTool, loadImage, status, isTyping });
 })(globalThis.Annot ??= {});

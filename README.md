@@ -13,6 +13,16 @@ Browser app to annotate an image and copy the result to the clipboard as a PNG. 
   - **Blur** and **Pixelate**: drag corner to corner to hide that part of the image. Annotations stay visible. They update live as you move them.
 - **Color** and **Size**: apply to new objects and to the selected object.
 - **Select** tool: click an object to select it. Click empty space to clear the selection.
+- **Tool keys**: press a key to pick a tool. Each button tooltip shows its key. Keys do nothing while you type text or drag.
+
+  | Key | Tool | Key | Tool |
+  |---|---|---|---|
+  | V or Esc | Select | N | Step |
+  | B | Box | U | Blur |
+  | A | Arrow | P | Pixelate |
+  | T | Text | | |
+
+  Esc during a drag cancels the drag.
 - **Delete** or **Backspace**: remove the selected objects.
 - **Undo** (Ctrl/⌘+Z) and **Redo** (Ctrl/⌘+Shift+Z).
 - **Copy**: puts the annotated image on the clipboard as a PNG at the original image size.
@@ -59,7 +69,7 @@ npm run test:e2e    # builds, then runs Playwright against dist/annotate.html in
 | Path | Role |
 |---|---|
 | `index.html` | Page layout, toolbar, script load order |
-| `src/app.js` | Canvas, tool registry, click-to-place and drag-to-draw, Delete key, image load |
+| `src/app.js` | Canvas, tool registry, click-to-place and drag-to-draw, Delete key, tool keys, image load |
 | `src/input.js` | Paste, file picker, drag and drop |
 | `src/style.js` | Color and size panel |
 | `src/export.js` | Copy PNG to clipboard |
@@ -70,4 +80,4 @@ npm run test:e2e    # builds, then runs Playwright against dist/annotate.html in
 | `docs/design.md` | Design and slice plan |
 | `.okf/` | Knowledge bundle (OKF v0.2): architecture, decisions, Fabric 7 pitfalls. Start at `.okf/index.md` |
 
-Each tool registers itself with `Annot.registerTool({ id, label, create, applyStyle, drag?, afterDrop? })`. A tool with `drag` draws by click-drag; without it, a click places it. To add a tool, add a file in `src/tools/` and one `<script>` line in `index.html`.
+Each tool registers itself with `Annot.registerTool({ id, label, key, create, applyStyle, drag?, afterDrop? })`. A tool with `drag` draws by click-drag; without it, a click places it. `key` is one free lowercase letter; a duplicate throws at load. To add a tool, add a file in `src/tools/` and one `<script>` line in `index.html`.

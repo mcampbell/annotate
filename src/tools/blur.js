@@ -41,14 +41,15 @@
   fabric.classRegistry.setClass(Blur);
 
   const applyStyle = (obj, { size }) => obj.set({ strength: size });
-  const tool = (id, label, mode) =>
+  const tool = (id, label, key, mode) =>
     Annot.registerTool({
       id,
       label,
+      key,
       create: (point, style) => applyStyle(new Blur({ mode }), style),
       drag: (obj, start, end) => obj.set(Annot.rectBetween(start, end)),
       applyStyle,
     });
-  tool('blur', 'Blur', 'blur');
-  tool('pixelate', 'Pixelate', 'pixelate');
+  tool('blur', 'Blur', 'u', 'blur');
+  tool('pixelate', 'Pixelate', 'p', 'pixelate');
 })(globalThis.Annot ??= {});

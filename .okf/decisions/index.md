@@ -6,3 +6,4 @@
 * [Undo by object snapshots](undo-snapshots.md) - Undo stores JSON of annotation objects, not commands and not the background image.
 * [Single-file build](single-file-build.md) - Ship one self-contained HTML file that opens from file://.
 * [Drag to draw](drag-to-draw.md) - Box, Arrow, Blur, Pixelate draw by click-drag; supersedes click-to-drop.
+* [Tool hotkeys](tool-hotkeys.md) - One letter key selects each tool; Escape selects Select or cancels a drag.

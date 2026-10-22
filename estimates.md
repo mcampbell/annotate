@@ -29,3 +29,15 @@ Scale: trivial/easy/medium/hard = 0.5/1/2/4 points. Relative within session 2026
 | R2 renumber recheck under undo reload | trivial | 0.5 |
 
 **Total: 13 points** (slices 10.5, conflicts 1, rework 1.5)
+
+## S9 tool hotkeys (2026-10-22)
+
+Relative within session 2026-10-22.
+
+| Item | Size | Points |
+|---|---|---|
+| S9 Tool hotkeys + tooltips + E2E | easy | 1 |
+| Merge conflicts | none (one slice) | 0 |
+| Rework | none | 0 |
+
+**Total: 1 point**

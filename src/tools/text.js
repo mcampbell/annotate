@@ -10,6 +10,7 @@
   Annot.registerTool({
     id: 'text',
     label: 'Text',
+    key: 't',
     create: (point, style) =>
       applyStyle(new fabric.IText('Text', { left: point.x, top: point.y, fontFamily: 'system-ui, sans-serif' }), style),
     applyStyle,

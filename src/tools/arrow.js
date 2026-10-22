@@ -31,6 +31,7 @@
   Annot.registerTool({
     id: 'arrow',
     label: 'Arrow',
+    key: 'a',
     create: (p, style) => applyStyle(new Arrow([{ x: p.x, y: p.y }, { x: p.x, y: p.y }]), style),
     drag: (obj, foot, tip) => {
       obj.set({ points: [{ x: foot.x, y: foot.y }, { x: tip.x, y: tip.y }] });

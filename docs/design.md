@@ -63,6 +63,7 @@ Run order. S2-S6 can run as parallel work streams after S1.
 | S5 | Step bubbles + auto-renumber | by business case | Numbered walkthroughs | tools/step.js |
 | S6 | Blur / pixelate | by business case | Hide secrets before sharing | tools/blur.js |
 | S7 | Undo / redo | by error-handling depth | Recover from mistakes | history.js, + serialization in arrow/step/blur |
+| S9 | Tool hotkeys | by input (keyboard) | Pick a tool without the mouse | app.js, tools/*.js |
 
 ### S1 - skeleton
 
@@ -111,12 +112,55 @@ Run order. S2-S6 can run as parallel work streams after S1.
 - New image load clears history.
 - Stack push/pop/truncate as pure function -> assert in `tests.html`.
 
+### S9 - tool hotkeys
+
+Added 2026-10-22. One slice: the change is one handler plus one field per tool. Too small to split.
+
+Key selects the tool, same as a button click. It does not place anything.
+
+| Key | Tool | Why this letter |
+|---|---|---|
+| V | Select | Figma/Photoshop convention |
+| B | Box | first letter |
+| A | Arrow | first letter |
+| T | Text | first letter |
+| N | Step | Number. S is taken by Select's first letter. |
+| U | Blur | blUr. B is taken by Box. |
+| P | Pixelate | first letter |
+| Esc | Select | |
+
+Decisions (mine):
+- Tool contract gains required `key` (one lowercase char). Changed from optional in build: every tool has one, and a missing key throws at load. `registerTool` passes it to `addButton`. Select passes `'v'` direct.
+- `addButton(id, label, key)` records `key -> id` in a map, sets `title = "Arrow (A)"` and `aria-keyshortcuts = "A"`.
+- Duplicate key throws at load. E2E `pageerror` check catches it. No silent overwrite.
+- One `keydown` listener in `app.js`, beside the Delete listener:
+  - return when `isTyping(e)` or `metaKey` / `ctrlKey` / `altKey` held. Keeps Cmd+V, Cmd+Z, Cmd+C, and text entry intact.
+  - while `drawing` (drag in progress): `Escape` -> `cancelDrawing()`, tool stays. Every other key -> no-op (owner request).
+  - else `Escape` -> `'select'`. Else `keys[e.key.toLowerCase()]`. Lowercase covers Caps Lock and Shift.
+  - hit -> `selectTool(id)`. Miss -> do nothing, no `preventDefault`.
+- Esc mid-drag keeps the tool: a switch to Select would set `canvas.selection = true` while the mouse is still down. After cancel, `mouse:move` / `mouse:up` return early (`drawing` is null), so the release makes nothing. Same path as `touchcancel`.
+- `blur.js` helper `tool(id, label, mode)` gains `key` arg.
+- No unit test: no pure logic. E2E only (`test/e2e/s9-keys.test.js`).
+
+E2E cases:
+- each key -> matching button `aria-pressed="true"`.
+- Esc after Box -> Select pressed.
+- typing `a` in a Text object -> text gets `a`, tool unchanged.
+- Cmd+A / Ctrl+A -> tool unchanged.
+- each button has `title` and `aria-keyshortcuts`.
+- tool key mid-drag (Box, press `a`, release) -> one box, Box still pressed.
+- Esc mid-drag (Box, press Esc, release) -> no object, Box still pressed.
+
+Out of scope (S9):
+- Non-Latin keyboard layouts. Personal project, one user, Latin layout.
+
 ## Expected merge conflicts
 
 | ID | Where | Cause | Slices |
 |---|---|---|---|
 | C1 | `index.html` script tag block | each tool adds one `<script>` line at same spot | S3, S4, S5, S6 concurrent |
 | C2 | `src/input.js` | S2 edits paste-only file from S1 | S2 vs any S1 fix |
+| - | none | S9 is one slice, no parallel stream | S9 |
 
 C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 
@@ -126,6 +170,7 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 |---|---|---|
 | R1 | S7 adds serialization to arrow, step, blur files | Undo last lets every tool ship without serialization code first. Cheaper than each tool writing it blind. |
 | R2 | S5 renumber must stay correct under S7 reload | Event-driven renumber; verify again in S7 |
+| - | none for S9 | one slice |
 
 ## Deferred edge cases
 
@@ -169,3 +214,5 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 - [x] Commit on `annotate-app`
 - [x] README
 - [x] /okf:okf (`.okf/`, strict-valid)
+- [x] S9 tool hotkeys (`app.js`, `tools/*.js`, `test/e2e/s9-keys.test.js`)
+- [x] S9 README key table + `.okf/` sync

@@ -5,6 +5,7 @@
   Annot.registerTool({
     id: 'box',
     label: 'Box',
+    key: 'b',
     create: (point, style) => applyStyle(new fabric.Rect({ fill: 'transparent', strokeUniform: true }), style),
     drag: (obj, start, end) => obj.set(Annot.rectBetween(start, end)),
     applyStyle,

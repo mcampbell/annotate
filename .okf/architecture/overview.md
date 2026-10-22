@@ -4,7 +4,7 @@ title: "Annotate architecture"
 description: "Classic scripts share one globalThis.Annot namespace around a single Fabric canvas."
 tags: [architecture]
 status: draft
-generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T22:00:00Z' }
+generated: { by: claude-code/claude-opus-5-5, at: '2026-10-22T15:42:25Z' }
 sources:
   - id: app
     resource: "repo annotate: src/app.js"
@@ -19,7 +19,7 @@ Every source file is a classic `<script>`: an IIFE that reads and extends `globa
 
 | File | Role | Concept |
 |---|---|---|
-| `src/app.js` | Canvas, tool registry, click-to-place and drag-to-draw, Delete key, `loadImage`, `isTyping` | [tool contract](/architecture/tool-contract.md) |
+| `src/app.js` | Canvas, tool registry, click-to-place and drag-to-draw, Delete key, tool keys, `loadImage`, `isTyping` | [tool contract](/architecture/tool-contract.md) |
 | `src/input.js` | Paste, Open button, drag-drop | [image input](/modules/image-input.md) |
 | `src/style.js` | Color and size panel | [style panel](/modules/style-panel.md) |
 | `src/export.js` | Copy PNG | [clipboard export](/modules/clipboard-export.md) |
