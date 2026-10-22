@@ -1,7 +1,7 @@
 // Canvas, tool registry, click-to-place and drag-to-draw, Delete key, image loading.
 (function (Annot) {
   // Base class: toObject always merges this list, even for subclasses with their own customProperties.
-  fabric.BaseFabricObject.customProperties = ['annotTool'];
+  fabric.BaseFabricObject.customProperties = ['annotTool', 'annotSize'];
   // targetFindTolerance (screen px): a size 1 outline is under 1 screen px wide when zoomed out.
   const canvas = new fabric.Canvas('canvas', { width: 0, height: 0, preserveObjectStacking: true, targetFindTolerance: 4 });
   const toolbar = document.getElementById('tools');
@@ -82,6 +82,7 @@
     const tool = activeTool;
     const obj = tool.create(scenePoint, Annot.style());
     obj.annotTool = tool.id;
+    obj.annotSize = Annot.style().size;
     if (tool.drag) {
       obj.excludeFromExport = true; // keeps it out of undo snapshots until the drag commits
       tool.drag(obj, scenePoint, scenePoint);
