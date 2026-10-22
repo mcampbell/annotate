@@ -9,8 +9,8 @@ test.afterEach(() => teardown(browser, errors));
 const dropArrow = async () => {
   await pasteImage(page);
   await page.fill('#color', '#ff0000');
-  await page.fill('#size', '6');
   await useTool(page, 'arrow');
+  await page.fill('#size', '6');
   await dragScene(page, 520, 440, 680, 360);
 };
 

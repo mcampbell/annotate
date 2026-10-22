@@ -78,7 +78,7 @@ Run the tasks in order. T10.1 and T10.2 both edit `test/e2e/s10-hit.test.js`.
 
 S11, S12, and S13 run in parallel. Expected conflicts: C3 (`src/style.js`), C4 (`src/app.js`), C5 (`README.md`, `.okf/modules/style-panel.md`). See `docs/design.md`.
 
-- [ ] **T11.1: Wheel handler**
+- [x] **T11.1: Wheel handler**
   - Why: S11 value. The user changes the size with the wheel, as if they moved the slider, and the slider shows it.
   - Where: `src/style.js` (new `wheel` listener on `#stage`), `src/app.js` (`Object.assign(Annot, ...)` at line 144: add `activeTool`), new `test/e2e/s11-wheel.test.js`
   - What:
@@ -106,7 +106,7 @@ S11, S12, and S13 run in parallel. Expected conflicts: C3 (`src/style.js`), C4 (
 
 ## Slice 12: Slider shows the selected object's size
 
-- [ ] **T12.1: Store and show annotSize**
+- [x] **T12.1: Store and show annotSize**
   - Why: S12 value. The user sees the size of the object they select, and the slider stays in sync with it.
   - Where: `src/app.js` (line 4 `customProperties`; line 84 beside `obj.annotTool = tool.id`), `src/style.js` (`applyToSelection`; new `selection:created` and `selection:updated` listener), new `test/e2e/s12-select-size.test.js`
   - What: Add `'annotSize'` to `customProperties`. Set `obj.annotSize` on create and in `applyToSelection`. On `selection:created` and `selection:updated`, if all selected objects have one `annotSize`, set `size.value` to it with no `input` event. Mixed sizes: leave the slider.
@@ -122,7 +122,7 @@ S11, S12, and S13 run in parallel. Expected conflicts: C3 (`src/style.js`), C4 (
 
 ## Slice 13: Size per tool
 
-- [ ] **T13.1: Per-tool sizes**
+- [x] **T13.1: Per-tool sizes**
   - Why: S13 value. Each tool keeps its own size, so switching tools does not lose a size the user set.
   - Where: `src/app.js` (`selectTool`, line 25), `src/style.js`, new `test/e2e/s13-tool-size.test.js`
   - What:
