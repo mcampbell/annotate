@@ -34,5 +34,6 @@ A `wheel` listener on `#stage` steps the slider and dispatches `input`, the same
 * Target: the selection wins, else the active tool, else nothing (no `preventDefault`). `ctrlKey` (trackpad pinch) is ignored, so browser zoom works.
 * A mouse notch (`wheelDeltaY` a non-zero multiple of 120) is one step. Other events add `deltaY` up, one step per 100 px. `deltaY < 0` is up. The native range clamps to 1..10.
 * One spin is one undo step: `change` fires 300 ms after the last event, or at once on `mouse:down:before`, so a press that changes the selection cannot lose the step.
-* Known gaps: the mouse check is unverified on real macOS hardware. An undo within 300 ms of a spin undoes the step before it.
+* The owner confirmed one step per notch on a real mouse (2026-10-22). The trackpad path is not checked on hardware yet.
+* Known gap: An undo within 300 ms of a spin undoes the step before it.
 

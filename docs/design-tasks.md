@@ -96,6 +96,7 @@ S11, S12, and S13 run in parallel. Expected conflicts: C3 (`src/style.js`), C4 (
   - What: Build. Ask the owner to open the build, pick Box, and (1) turn the wheel one notch up and one notch down, and (2) swipe two fingers slowly up on the trackpad. If a notch gives 0 or 2 steps, or the trackpad jumps, add a temporary `console.log` of `deltaY` and `wheelDeltaY`, get the values from the owner, and fix the check or `STEP_PX`.
   - Options: none
   - Done when: the owner confirms that one notch is one size step in each direction, and that a slow trackpad swipe changes the size steadily.
+  - Status (2026-10-22): mouse confirmed by the owner, one step per notch. Trackpad not checked yet.
 
 - [x] **T11.3: S11 docs**
   - Why: The README and OKF describe the wheel.
