@@ -1,5 +1,8 @@
 // Blur / Pixelate: rect that re-renders the background image region under it. Size = strength.
 (function (Annot) {
+  // One scratch canvas for every pixelate render. Rendering is synchronous, so sharing it is safe.
+  const small = document.createElement('canvas');
+
   class Blur extends fabric.Rect {
     static type = 'Blur';
     static customProperties = ['mode', 'strength'];
@@ -20,10 +23,9 @@
       ctx.scale(1 / this.scaleX, 1 / this.scaleY);
       if (this.mode === 'pixelate') {
         const block = this.strength * 4;
-        const small = Object.assign(document.createElement('canvas'), {
-          width: Math.max(1, Math.ceil(w / block)),
-          height: Math.max(1, Math.ceil(h / block)),
-        });
+        // Setting the size also clears the canvas.
+        small.width = Math.max(1, Math.ceil(w / block));
+        small.height = Math.max(1, Math.ceil(h / block));
         small.getContext('2d').drawImage(src, x, y, w, h, 0, 0, small.width, small.height);
         ctx.imageSmoothingEnabled = false;
         ctx.drawImage(small, -w / 2, -h / 2, w, h);
