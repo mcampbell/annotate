@@ -326,8 +326,8 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 - [x] S9 README key table + `.okf/` sync
 - [x] S10 outline-only hit for Box and Arrow (`app.js`, `tools/box.js`, `tools/arrow.js`, `test/e2e/s10-hit.test.js`)
 - [x] S10 README + `.okf/` sync
-- [ ] S11 wheel changes size (`style.js`, `test/e2e/s11-wheel.test.js`)
-- [ ] S12 slider shows selected size (`style.js`, `app.js`, `test/e2e/s12-select-size.test.js`)
-- [ ] S13 size per tool (`style.js`, `app.js`, `test/e2e/s13-tool-size.test.js`)
+- [x] S11 wheel changes size (`style.js`, `test/e2e/s11-wheel.test.js`)
+- [x] S12 slider shows selected size (`style.js`, `app.js`, `test/e2e/s12-select-size.test.js`)
+- [x] S13 size per tool (`style.js`, `app.js`, `test/e2e/s13-tool-size.test.js`)
 - [ ] S11 hands-on wheel check with the owner's mouse and trackpad
-- [ ] S11-S13 README + `.okf/` sync
+- [x] S11-S13 README + `.okf/` sync

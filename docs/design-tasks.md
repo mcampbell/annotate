@@ -97,7 +97,7 @@ S11, S12, and S13 run in parallel. Expected conflicts: C3 (`src/style.js`), C4 (
   - Options: none
   - Done when: the owner confirms that one notch is one size step in each direction, and that a slow trackpad swipe changes the size steadily.
 
-- [ ] **T11.3: S11 docs**
+- [x] **T11.3: S11 docs**
   - Why: The README and OKF describe the wheel.
   - Where: `README.md` (feature list), `.okf/modules/style-panel.md`
   - What: Add the wheel rule (selected object, else active tool, else nothing), mouse and trackpad steps, and one undo step per spin.
@@ -113,7 +113,7 @@ S11, S12, and S13 run in parallel. Expected conflicts: C3 (`src/style.js`), C4 (
   - Options: none
   - Done when: `npm run test:e2e` passes, with the S12 cases from `docs/design.md` in `s12-select-size.test.js`: select shows size, switch between objects, same and mixed multi-select, undo and redo keep `annotSize`.
 
-- [ ] **T12.2: S12 docs**
+- [x] **T12.2: S12 docs**
   - Why: The README and OKF describe the slider sync.
   - Where: `README.md` (Color and Size line), `.okf/modules/style-panel.md`, `.okf/modules/undo-redo.md` (custom properties)
   - What: State that selecting objects of one size moves the slider to that size. Record `annotSize` as a serialized custom property.
@@ -134,7 +134,7 @@ S11, S12, and S13 run in parallel. Expected conflicts: C3 (`src/style.js`), C4 (
   - Options: none
   - Done when: `npm run test:e2e` passes, with the S13 cases from `docs/design.md` in `s13-tool-size.test.js`: sizes kept per tool, a new object uses its tool's size, deselect restores the tool's size, a tool key with a selection keeps the object's size.
 
-- [ ] **T13.2: S13 docs**
+- [x] **T13.2: S13 docs**
   - Why: The README and OKF describe per-tool size.
   - Where: `README.md` (Color and Size line), `.okf/modules/style-panel.md`, `docs/design.md` Tasks list
   - What: State that each tool keeps its own size until reload. Tick S11 to S13 in `docs/design.md` once all three have landed.

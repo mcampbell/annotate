@@ -11,7 +11,8 @@ Browser app to annotate an image and copy the result to the clipboard as a PNG. 
   - **Text**: type when it drops. Double-click to edit again. Empty text is removed.
   - **Step**: numbered bubble. Numbers update when you add or delete a step.
   - **Blur** and **Pixelate**: drag corner to corner to hide that part of the image. Annotations stay visible. They update live as you move them.
-- **Color** and **Size**: apply to new objects and to the selected object.
+- **Color** and **Size**: apply to new objects and to the selected object. Each tool keeps its own size until you reload the page. When you select objects of one size, the slider shows that size. A color change keeps each object's size.
+- **Mouse wheel** over the image: changes the size, as if you moved the slider. It changes the selected object if there is one, else the active tool's size. With the Select tool and nothing selected, it does nothing. One mouse notch is one step. A trackpad changes one step per 100 px of scroll. One spin is one undo step.
 - **Select** tool: click an object to select it. Click empty space to clear the selection.
 - **Tool keys**: press a key to pick a tool. Each button tooltip shows its key. Keys do nothing while you type text or drag.
 

@@ -4,7 +4,7 @@ title: "Fabric 7 pitfalls"
 description: "Fabric.js 7 behaviors that broke or nearly broke this app, each with the fix in use."
 tags: [fabric, pitfall]
 status: draft
-generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T22:00:00Z' }
+generated: { by: claude-code/claude-opus-5-5, at: '2026-10-22T19:30:00Z' }
 sources:
   - id: fabric
     resource: "repo annotate: node_modules/fabric/dist/index.mjs"
@@ -18,7 +18,7 @@ Each item was confirmed in `node_modules/fabric/dist/index.mjs` (7.4.0) or by an
 | Pitfall | Fix in this app |
 |---|---|
 | Default `originX`/`originY` is `center`. | Click tools place centered; `rectBetween` returns center coords for drag tools. The background image sets `left`/`top` origin explicitly. |
-| `toObject` merges `BaseFabricObject.customProperties` plus the class's own list. A subclass list hides `fabric.FabricObject.customProperties`. | Set `annotTool` on `fabric.BaseFabricObject`. |
+| `toObject` merges `BaseFabricObject.customProperties` plus the class's own list. A subclass list hides `fabric.FabricObject.customProperties`. | Set `annotTool` and `annotSize` on `fabric.BaseFabricObject`. |
 | Instance `type` getter returns lowercase (`'arrow'`). | Tests compare `obj.constructor.type`. |
 | `exitEditing` fires `text:editing:exited`, then uses `this.canvas`. Removing the object in the handler throws. | Defer the removal with `queueMicrotask`. |
 | `exitEditing` fires `object:modified` when text changed. | Undo records typed text with no extra code. |
