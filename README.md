@@ -47,7 +47,13 @@ Open it from disk:
 open dist/annotate.html          # macOS
 ```
 
-Or enter `file:///path/to/annotate/dist/annotate.html` in Chrome.
+On Windows (cmd or PowerShell):
+
+```bat
+start dist\annotate.html
+```
+
+Or double-click the file, or enter its `file://` URL in Chrome or Edge: `file:///path/to/annotate/dist/annotate.html` (macOS), `file:///C:/path/to/annotate/dist/annotate.html` (Windows). Windows is not tested.
 
 For development, open `index.html` directly. It loads the scripts from `src/` and `node_modules/`.
 
