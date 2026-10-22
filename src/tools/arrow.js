@@ -4,7 +4,8 @@
     static type = 'Arrow';
 
     constructor(points, options) {
-      super(points, { fill: '', strokeLineCap: 'round', objectCaching: false, ...options });
+      // perPixelTargetFind: hit only on the line and head, not the empty bounding box.
+      super(points, { fill: '', strokeLineCap: 'round', objectCaching: false, perPixelTargetFind: true, ...options });
       this.controls = fabric.controlsUtils.createPolyControls(this);
     }
 

@@ -2,7 +2,7 @@
 
 Design: `docs/design.md`
 
-S1-S7 are done (see the Tasks list in the design doc). This file covers S9 only.
+S1-S7 are done (see the Tasks list in the design doc). This file covers S9 and S10.
 
 ## Slice 9: Tool hotkeys
 
@@ -40,6 +40,40 @@ Run the tasks in order. T9.1 and T9.2 both edit `src/app.js` and `test/e2e/s9-ke
   - Options: none
   - Done when: `grep -n "label, key," README.md` finds the contract line (key is required, so no `key?`). `/okf:validate` reports the bundle as valid. The `docs/design.md` S9 items are ticked.
 
+## Slice 10: Outline-only hit for Box and Arrow
+
+Run the tasks in order. T10.1 and T10.2 both edit `test/e2e/s10-hit.test.js`.
+
+- [x] **T10.1: Box hit only on its outline**
+  - Why: S10 value. The user draws inside a box without selecting the box.
+  - Where: `src/tools/box.js`, `src/app.js` (canvas options, line 5), new `test/e2e/s10-hit.test.js`
+  - What: Replace the plain `fabric.Rect` with `class Box extends fabric.Rect`, `static type = 'Box'`. Put the defaults in the constructor: `fill: 'transparent'`, `strokeUniform: true`, `perPixelTargetFind: true`. Register it with `fabric.classRegistry.setClass(Box)`. `create` calls `new Box()`. Add `targetFindTolerance: 4` to the `fabric.Canvas` options in `app.js`.
+  - Options: none (Box `padding` rejected: see Q and A)
+  - Done when: `npm run test:e2e` passes, with these cases in `s10-hit.test.js`:
+    - With a box drawn, an Arrow drag inside the box gives 2 objects.
+    - With the Select tool, a click on the box interior leaves no active object.
+    - With the Select tool, a click on the box outline makes the box active.
+    - With the box selected, a Box drag inside it gives 2 boxes.
+    - After a box, then a second object, then undo, a click on the box interior leaves no active object.
+    - With a size 1 box, a click 3 screen px inside the outline makes the box active.
+
+- [x] **T10.2: Arrow hit only on its line and head**
+  - Why: S10 value. The user draws beside a diagonal arrow without selecting the arrow.
+  - Where: `src/tools/arrow.js` (Arrow constructor defaults, line 7), `test/e2e/s10-hit.test.js`
+  - What: Add `perPixelTargetFind: true` to the Arrow constructor defaults.
+  - Options: none
+  - Done when: `npm run test:e2e` passes, with these cases in `s10-hit.test.js`:
+    - With a diagonal arrow and the Select tool, a click on the empty corner of its bounding box leaves no active object.
+    - A click on the line midpoint makes the arrow active.
+    - The existing endpoint-drag tests in `s3-arrow.test.js` still pass.
+
+- [x] **T10.3: Docs sync**
+  - Why: The README and the OKF bundle match the shipped behavior.
+  - Where: `README.md` (Box and Arrow feature lines), `.okf/architecture/tool-contract.md`, `.okf/decisions/` (new `outline-hit.md`, `index.md`), `docs/design.md` Tasks list
+  - What: State in the README that you select a Box by its outline and an Arrow by its line. Add an OKF decision for outline-only hit, with the Fabric facts and the serialization reason. Tick S10 in `docs/design.md`.
+  - Options: none
+  - Done when: `grep -n "outline" README.md` finds the new line. The OKF validator reports the bundle as conformant under `--strict`. The `docs/design.md` S10 items are ticked.
+
 ## Questions and answers
 
 - Q (T9.2): What should a key press during a drag do?
@@ -48,3 +82,7 @@ Run the tasks in order. T9.1 and T9.2 both edit `src/app.js` and `test/e2e/s9-ke
   A: Yes. (Mine: the tool stays, so `canvas.selection` does not turn on while the mouse is down.)
 - Q (general): Support non-Latin keyboard layouts?
   A: No. This is a personal project with one user.
+- Q (T10.1): Give Box padding, so that presses just outside the outline also select it?
+  A: No padding now. Add it later if the miss is a problem.
+- Q (general): Which objects get outline-only hit?
+  A: Box and Arrow. Blur, Pixelate, Step, and Text keep bounding-box hit.

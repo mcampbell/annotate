@@ -41,3 +41,15 @@ Relative within session 2026-10-22.
 | Rework | none | 0 |
 
 **Total: 1 point**
+
+## S10 outline-only hit for Box and Arrow (2026-10-22)
+
+Relative within session 2026-10-22. S9 = 1 point.
+
+| Item | Size | Points |
+|---|---|---|
+| S10 Box class + Arrow flag + tolerance + E2E | easy | 1 |
+| Merge conflicts | none (one slice) | 0 |
+| Rework | none | 0 |
+
+**Total: 1 point**

@@ -64,6 +64,7 @@ Run order. S2-S6 can run as parallel work streams after S1.
 | S6 | Blur / pixelate | by business case | Hide secrets before sharing | tools/blur.js |
 | S7 | Undo / redo | by error-handling depth | Recover from mistakes | history.js, + serialization in arrow/step/blur |
 | S9 | Tool hotkeys | by input (keyboard) | Pick a tool without the mouse | app.js, tools/*.js |
+| S10 | Outline-only hit for Box and Arrow | by business case | Draw inside a box or near an arrow without selecting it | app.js, tools/box.js, tools/arrow.js |
 
 ### S1 - skeleton
 
@@ -154,6 +155,36 @@ E2E cases:
 Out of scope (S9):
 - Non-Latin keyboard layouts. Personal project, one user, Latin layout.
 
+### S10 - outline-only hit for Box and Arrow
+
+Added 2026-10-22. Owner irritant: a press inside a box selects the box, so you cannot draw inside it. Same for the empty bounding box of a diagonal arrow. One slice: about 10 lines in 3 files.
+
+Fabric 7.4 facts (read in `node_modules/fabric/dist/index.mjs`):
+- `_checkTarget`: with `perPixelTargetFind`, a point inside the bounding box hits only if the rendered pixel there is not transparent. Box fill is `transparent`, so the interior misses.
+- `findTarget`: with `preserveObjectStacking` (set in `app.js`), a selected object wins only on its controls, or with the Alt key. Its interior goes through the same pixel check, so a selected box does not catch interior presses.
+- `isTargetTransparent` checks a square of `targetFindTolerance` viewport px around the point. Only per-pixel objects use it.
+- `toObject` does not serialize `perPixelTargetFind`. Undo restores from JSON, so the flag must be a constructor default ([tool contract rule](/.okf/architecture/tool-contract.md)).
+
+Decisions (mine):
+- Box becomes `class Box extends fabric.Rect`, `static type = 'Box'`, registered with `fabric.classRegistry.setClass`. Constructor defaults: `fill: 'transparent'`, `strokeUniform: true`, `perPixelTargetFind: true`. `create` calls `new Box()`. No code or test depends on type `Rect`.
+- Arrow constructor defaults gain `perPixelTargetFind: true`.
+- `app.js` canvas options gain `targetFindTolerance: 4` (screen px). Reason: a size-1 outline at zoom < 1 is under 1 screen px wide.
+- Blur, Pixelate, Step, Text keep bounding-box hit (owner choice). Their interior is content.
+- Result: a press inside a box or beside an arrow line goes to the active tool. With Select, it starts a rubber-band selection. The move cursor shows only over the outline or line.
+
+E2E cases (`test/e2e/s10-hit.test.js`):
+- Box drawn, Arrow tool, drag inside the box -> 2 objects (the irritant).
+- Select tool, click box interior -> no active object.
+- Select tool, click on the box outline -> box active.
+- Box selected, Box tool, drag inside it -> 2 boxes (selected-object path).
+- Box drawn, second object drawn, undo -> click box interior -> no active object (flag survives restore).
+- Diagonal arrow, Select tool, click the empty corner of its bounding box -> no active object. Click the line midpoint -> arrow active.
+- Size 1 box, click 3 screen px inside the outline -> box active (tolerance).
+
+Deferred edge cases (S10):
+- A press just outside the outline misses: Fabric checks the bounding box before the pixel check. Fix if it irritates: Box `padding` in screen px. Cost: the selection frame draws that far out. Owner: no padding now (2026-10-22).
+- Hit-test cost: Fabric renders the object once per hover hit-test inside its bounding box. Box and Arrow render cheaply. Not measured.
+
 ## Expected merge conflicts
 
 | ID | Where | Cause | Slices |
@@ -161,6 +192,7 @@ Out of scope (S9):
 | C1 | `index.html` script tag block | each tool adds one `<script>` line at same spot | S3, S4, S5, S6 concurrent |
 | C2 | `src/input.js` | S2 edits paste-only file from S1 | S2 vs any S1 fix |
 | - | none | S9 is one slice, no parallel stream | S9 |
+| - | none | S10 is one slice, no parallel stream | S10 |
 
 C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 
@@ -171,6 +203,7 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 | R1 | S7 adds serialization to arrow, step, blur files | Undo last lets every tool ship without serialization code first. Cheaper than each tool writing it blind. |
 | R2 | S5 renumber must stay correct under S7 reload | Event-driven renumber; verify again in S7 |
 | - | none for S9 | one slice |
+| - | none for S10 | one slice |
 
 ## Deferred edge cases
 
@@ -216,3 +249,5 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 - [x] /okf:okf (`.okf/`, strict-valid)
 - [x] S9 tool hotkeys (`app.js`, `tools/*.js`, `test/e2e/s9-keys.test.js`)
 - [x] S9 README key table + `.okf/` sync
+- [x] S10 outline-only hit for Box and Arrow (`app.js`, `tools/box.js`, `tools/arrow.js`, `test/e2e/s10-hit.test.js`)
+- [x] S10 README + `.okf/` sync

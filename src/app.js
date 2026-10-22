@@ -2,7 +2,8 @@
 (function (Annot) {
   // Base class: toObject always merges this list, even for subclasses with their own customProperties.
   fabric.BaseFabricObject.customProperties = ['annotTool'];
-  const canvas = new fabric.Canvas('canvas', { width: 0, height: 0, preserveObjectStacking: true });
+  // targetFindTolerance (screen px): a size 1 outline is under 1 screen px wide when zoomed out.
+  const canvas = new fabric.Canvas('canvas', { width: 0, height: 0, preserveObjectStacking: true, targetFindTolerance: 4 });
   const toolbar = document.getElementById('tools');
   const statusEl = document.getElementById('status');
   const stage = document.getElementById('stage');
