@@ -87,3 +87,15 @@ test('a color change keeps each size in a mixed selection', async () => {
   assert.deepEqual(boxes, [['#00ff00', 4, 4], ['#00ff00', 6, 6]]);
 });
 
+test('a size change on a selected box shows when you select it again', async () => {
+  await pasteImage(page);
+  await drawBox(100, 100, 400, 300, 4);
+  await useTool(page, 'select');
+  await clickScene(page, 100, 200);
+  await setSize(7);
+  await deselect();
+  await setSize(1);
+  await clickScene(page, 100, 200);
+  assert.equal(await slider(), '7');
+});
+

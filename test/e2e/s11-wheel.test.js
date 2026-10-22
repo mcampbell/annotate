@@ -59,9 +59,10 @@ const fire = (deltaY, wheelDeltaY, n = 1) =>
     }
   }, [deltaY, wheelDeltaY, n]);
 
-test('mouse: one event of deltaY -120 is one step', async () => {
+// macOS can report a small deltaY for a notch: the step must not depend on the distance.
+test('mouse: one notch is one step, even with a small deltaY', async () => {
   await useTool(page, 'box');
-  await fire(-120, 120);
+  await fire(-4, 120);
   assert.equal(await slider(), 4);
 });
 
@@ -69,6 +70,14 @@ test('trackpad: 10 events of deltaY -10 are one step', async () => {
   await useTool(page, 'box');
   await fire(-10, 0, 10);
   assert.equal(await slider(), 4);
+});
+
+test('trackpad: the remainder carries to the next step', async () => {
+  await useTool(page, 'box');
+  await fire(-10, 0, 15);
+  assert.equal(await slider(), 4);
+  await fire(-10, 0, 5);
+  assert.equal(await slider(), 5);
 });
 
 test('one spin is one undo step', async () => {
