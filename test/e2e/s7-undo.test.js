@@ -113,3 +113,15 @@ test('Ctrl+Z while editing text does not restore', async () => {
   await undo(); await page.keyboard.press('Backspace');
   assert.equal(await count(), 1);
 });
+
+// Windows habit: Ctrl+Y redoes, as Ctrl+Shift+Z does.
+test('Ctrl+Y redoes', async () => {
+  await pasteImage(page);
+  await useTool(page, 'box');
+  await dragRect(page, 600, 400);
+  await undo();
+  await page.waitForFunction(() => !Annot.undoBusy());
+  await page.keyboard.press('ControlOrMeta+y');
+  await page.waitForFunction(() => !Annot.undoBusy());
+  assert.equal((await objects(page)).length, 1);
+});

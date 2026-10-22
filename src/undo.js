@@ -39,9 +39,11 @@
   canvas.on('annot:loaded', () => (h = history.create(snapshot())));
 
   document.addEventListener('keydown', (e) => {
-    if (busy || Annot.isTyping(e) || !(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'z') return;
+    const key = e.key.toLowerCase();
+    if (busy || Annot.isTyping(e) || !(e.metaKey || e.ctrlKey) || !['z', 'y'].includes(key)) return;
     e.preventDefault();
-    restore(e.shiftKey ? history.redo(h) : history.undo(h));
+    // Redo: Shift+Z, or Y (the Windows habit).
+    restore(e.shiftKey || key === 'y' ? history.redo(h) : history.undo(h));
   });
 
   Annot.undoBusy = () => busy;

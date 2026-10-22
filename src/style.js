@@ -67,7 +67,7 @@
   });
   // Capture phase: commit a pending spin before undo.js handles the same key, so undo reverts the spin.
   document.addEventListener('keydown', (e) => {
-    if (idle && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') commitWheel();
+    if (idle && (e.metaKey || e.ctrlKey) && ['z', 'y'].includes(e.key.toLowerCase())) commitWheel();
   }, { capture: true });
   document.getElementById('stage').addEventListener('wheel', (e) => {
     if (e.ctrlKey || (!Annot.canvas.getActiveObjects().length && !Annot.activeTool())) return;

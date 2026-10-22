@@ -25,7 +25,7 @@ Browser app to annotate an image and copy the result to the clipboard as a PNG. 
 
   Esc during a drag cancels the drag.
 - **Delete** or **Backspace**: remove the selected objects.
-- **Undo** (Ctrl/⌘+Z) and **Redo** (Ctrl/⌘+Shift+Z).
+- **Undo** (Ctrl/⌘+Z) and **Redo** (Ctrl/⌘+Shift+Z, or Ctrl/⌘+Y).
 - **Copy**: puts the annotated image on the clipboard as a PNG at the original image size.
 
 Supported browsers: Chrome and Edge.
