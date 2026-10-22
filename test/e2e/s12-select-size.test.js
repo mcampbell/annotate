@@ -72,3 +72,18 @@ test('undo and redo keep annotSize', async () => {
   await clickScene(page, 100, 200);
   assert.equal(await slider(), '7');
 });
+
+// The slider does not show a mixed selection's sizes, so a color change must not apply it to them.
+test('a color change keeps each size in a mixed selection', async () => {
+  await pasteImage(page);
+  await drawBox(100, 100, 400, 300, 4);
+  await drawBox(100, 400, 400, 600, 6);
+  await page.evaluate(() => {
+    const { canvas } = Annot;
+    canvas.setActiveObject(new fabric.ActiveSelection(canvas.getObjects(), { canvas }));
+  });
+  await page.fill('#color', '#00ff00');
+  const boxes = await page.evaluate(() => Annot.canvas.getObjects().map((o) => [o.stroke, o.strokeWidth, o.annotSize]));
+  assert.deepEqual(boxes, [['#00ff00', 4, 4], ['#00ff00', 6, 6]]);
+});
+

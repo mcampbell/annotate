@@ -6,11 +6,13 @@
   Annot.style = () => ({ color: color.value, size: Number(size.value) });
 
   // Live preview on input. Commit on change, so one slider drag is one undo step.
-  const applyToSelection = () => {
+  const applyToSelection = (e) => {
     const { canvas, tools } = Annot;
     canvas.getActiveObjects().forEach((obj) => {
-      tools[obj.annotTool]?.applyStyle(obj, Annot.style());
-      obj.annotSize = Annot.style().size;
+      // A color change keeps each object's size: the slider does not show a mixed selection's sizes.
+      const style = e.target === color ? { ...Annot.style(), size: obj.annotSize ?? Annot.style().size } : Annot.style();
+      tools[obj.annotTool]?.applyStyle(obj, style);
+      obj.annotSize = style.size;
       obj.setCoords();
     });
     canvas.requestRenderAll();
@@ -32,7 +34,9 @@
     const id = Annot.activeTool();
     if (id && !Annot.canvas.getActiveObjects().length) sizes[id] = size.value;
   });
-  Annot.canvas.on('annot:tool', () => Annot.canvas.getActiveObjects().length || showToolSize());
+  Annot.canvas.on('annot:tool', () => {
+    if (!Annot.canvas.getActiveObjects().length) showToolSize();
+  });
   Annot.canvas.on('selection:cleared', showToolSize);
 
   const commit = () => Annot.canvas.getActiveObjects().forEach((target) => Annot.canvas.fire('object:modified', { target }));
@@ -47,13 +51,20 @@
   let acc = 0;
   let idle;
   // One spin is one undo step: commit once the wheel stops.
+  const commitWheel = () => {
+    clearTimeout(idle);
+    idle = undefined;
+    acc = 0;
+    size.dispatchEvent(new Event('change'));
+  };
   const resetLater = () => {
     clearTimeout(idle);
-    idle = setTimeout(() => {
-      acc = 0;
-      size.dispatchEvent(new Event('change'));
-    }, IDLE_MS);
+    idle = setTimeout(commitWheel, IDLE_MS);
   };
+  // A press can change the selection: commit a pending spin first, while its objects are still selected.
+  Annot.canvas.on('mouse:down:before', () => {
+    if (idle) commitWheel();
+  });
   document.getElementById('stage').addEventListener('wheel', (e) => {
     if (e.ctrlKey || (!Annot.canvas.getActiveObjects().length && !Annot.activeTool())) return;
     e.preventDefault();
@@ -64,7 +75,7 @@
     if (!steps) return resetLater();
     const up = (notch ? e.deltaY : acc) < 0;
     acc = notch ? 0 : acc % STEP_PX;
-    for (let i = 0; i < steps; i++) up ? size.stepUp() : size.stepDown();
+    size[up ? 'stepUp' : 'stepDown'](steps);
     size.dispatchEvent(new Event('input'));
     resetLater();
   }, { passive: false });

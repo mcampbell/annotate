@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, teardown, pasteImage, toScreen, useTool, dragRect, objects } = require('./helpers');
+const { open, teardown, pasteImage, toScreen, clickScene, useTool, dragRect, objects } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => {
@@ -81,6 +81,19 @@ test('one spin is one undo step', async () => {
   await page.keyboard.press('ControlOrMeta+z');
   await page.waitForFunction(() => !Annot.undoBusy());
   assert.equal((await objects(page))[0].strokeWidth, 3);
+});
+
+// Under Select, a click that clears the selection before the idle commit must not lose the spin's undo step.
+test('a spin then an immediate deselect is still one undo step', async () => {
+  await useTool(page, 'box');
+  await dragRect(page, 1200, 800);
+  await selectFirst();
+  await wheel(-120, 2);
+  await clickScene(page, 200, 200);
+  await page.waitForTimeout(400);
+  await page.keyboard.press('ControlOrMeta+z');
+  await page.waitForFunction(() => !Annot.undoBusy());
+  assert.deepEqual((await objects(page)).map((o) => o.strokeWidth), [3]);
 });
 
 test('Ctrl + wheel leaves the slider', async () => {

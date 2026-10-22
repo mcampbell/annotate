@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, teardown, pasteImage, clickScene, dragRect, useTool, objects } = require('./helpers');
+const { open, teardown, pasteImage, clickScene, dragRect, useTool, objects, toScreen } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => {
@@ -45,4 +45,15 @@ test('deselect restores the tool size after an object edit', async () => {
   assert.equal(await slider(), '5'); // a tool key keeps the object's size
   await page.evaluate(() => Annot.canvas.discardActiveObject());
   assert.equal(await slider(), '7');
+});
+
+test('the wheel sets the active tool size', async () => {
+  await pasteImage(page);
+  await useTool(page, 'box');
+  await page.mouse.move(...(await toScreen(page, 1200, 800)));
+  await page.mouse.wheel(0, -120);
+  await page.mouse.wheel(0, -120);
+  await useTool(page, 'text');
+  await useTool(page, 'box');
+  assert.equal(await slider(), '5');
 });
