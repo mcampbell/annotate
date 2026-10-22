@@ -4,7 +4,8 @@
     static type = 'Step';
     constructor(...args) {
       super(...args);
-      this.setControlsVisibility({ mt: false, mb: false, ml: false, mr: false });
+      // No resize handles: size sets the scale, so a handle resize would snap back on the next size change.
+      this.setControlsVisibility({ mt: false, mb: false, ml: false, mr: false, tl: false, tr: false, bl: false, br: false });
     }
   }
   fabric.classRegistry.setClass(Step);

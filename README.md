@@ -9,7 +9,7 @@ Browser app to annotate an image and copy the result to the clipboard as a PNG. 
   - **Box**: outlined rectangle, corner to corner. Select it by its outline: a press inside goes to the active tool, so you can draw inside a box.
   - **Arrow**: drag from the foot to the tip. Drag either end later to aim it. Select it by its line or head, not the empty space beside it.
   - **Text**: type when it drops. Double-click to edit again. Empty text is removed.
-  - **Step**: numbered bubble. Numbers update when you add or delete a step.
+  - **Step**: numbered bubble. Numbers update when you add or delete a step. Resize it with **Size** or the wheel; it has no resize handles.
   - **Blur** and **Pixelate**: drag corner to corner to hide that part of the image. Annotations stay visible. They update live as you move them.
 - **Color** and **Size**: apply to new objects and to the selected object. Each tool keeps its own size until you reload the page. When you select objects of one size, the slider shows that size. A color change keeps each object's size.
 - **Mouse wheel** over the image: changes the size, as if you moved the slider. It changes the selected object if there is one, else the active tool's size. With the Select tool and nothing selected, it does nothing. One mouse notch is one step. A trackpad changes one step per 100 px of scroll. One spin is one undo step.

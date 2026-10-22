@@ -56,3 +56,13 @@ test('serialization round trip', async () => {
   });
   assert.deepEqual(r, ['Step', 'step', false]);
 });
+
+// Size sets the step's scale, so a handle resize would be undone by the next size change.
+test('a step has no resize handles', async () => {
+  await pasteImage(page);
+  await useTool(page, 'step');
+  await clickScene(page, 600, 400);
+  const visible = await page.evaluate(() =>
+    ['tl', 'tr', 'bl', 'br', 'ml', 'mr', 'mt', 'mb'].filter((c) => Annot.canvas.getObjects()[0].isControlVisible(c)));
+  assert.deepEqual(visible, []);
+});
