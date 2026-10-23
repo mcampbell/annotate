@@ -4,7 +4,7 @@ title: "Blur and Pixelate tools"
 description: "Rect that re-renders the background image region under it, blurred or pixelated."
 tags: [tool]
 status: draft
-generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T21:00:00Z' }
+generated: { by: claude-code/claude-opus-5-5, at: '2026-10-23T15:15:00Z' }
 sources:
   - id: src
     resource: "repo annotate: src/tools/blur.js"
@@ -17,7 +17,7 @@ One class, `Blur extends fabric.Rect`, with `mode` (`blur` or `pixelate`) and `s
 
 `_render` reads `canvas.backgroundImage` at the object's scene top-left:
 
-* pixelate: draw the region into a small canvas (block = `strength * 4` px), draw it back with `imageSmoothingEnabled = false`.
+* pixelate: draw the region into a small canvas (block = `strength * 4` px), draw it back with `imageSmoothingEnabled = false`. All Blur objects share one module-level scratch canvas. Rendering is synchronous, so this is safe. Each render sets its size, which also clears it.
 * blur: clip to the rect, `ctx.filter = blur(strength * 2 px)`, draw the region with a margin.
 
 `objectCaching: false` so it updates live as it moves. Rotation and flip are locked. By design it hides only the image: annotations under it stay visible. The owner prefers this; do not change it.
