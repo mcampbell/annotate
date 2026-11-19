@@ -1,13 +1,18 @@
-// Arrow: 2-point polyline, dragged from foot to tip, with a filled head at the tip. Size = stroke width.
+// Line and Arrow: 2-point polylines, dragged from foot to tip. Arrow adds a filled head at the tip. Size = stroke width.
 (function (Annot) {
-  class Arrow extends fabric.Polyline {
-    static type = 'Arrow';
+  class Line extends fabric.Polyline {
+    static type = 'Line';
 
     constructor(points, options) {
-      // perPixelTargetFind: hit only on the line and head, not the empty bounding box.
+      // perPixelTargetFind: hit only on the drawn pixels, not the empty bounding box.
       super(points, { fill: '', strokeLineCap: 'round', objectCaching: false, perPixelTargetFind: true, ...options });
       this.controls = fabric.controlsUtils.createPolyControls(this);
     }
+  }
+  fabric.classRegistry.setClass(Line);
+
+  class Arrow extends Line {
+    static type = 'Arrow';
 
     _render(ctx) {
       super._render(ctx);
@@ -28,16 +33,13 @@
   fabric.classRegistry.setClass(Arrow);
 
   const applyStyle = (obj, { color, size }) => obj.set({ stroke: color, strokeWidth: size });
+  const drag = (obj, foot, tip) => {
+    obj.set({ points: [{ x: foot.x, y: foot.y }, { x: tip.x, y: tip.y }] });
+    obj.setBoundingBox(true); // recenter the object on the new points
+  };
+  const register = (Cls, id, label, key) =>
+    Annot.registerTool({ id, label, key, create: (p, style) => applyStyle(new Cls([{ x: p.x, y: p.y }, { x: p.x, y: p.y }]), style), drag, applyStyle });
 
-  Annot.registerTool({
-    id: 'arrow',
-    label: 'Arrow',
-    key: 'a',
-    create: (p, style) => applyStyle(new Arrow([{ x: p.x, y: p.y }, { x: p.x, y: p.y }]), style),
-    drag: (obj, foot, tip) => {
-      obj.set({ points: [{ x: foot.x, y: foot.y }, { x: tip.x, y: tip.y }] });
-      obj.setBoundingBox(true); // recenter the object on the new points
-    },
-    applyStyle,
-  });
+  register(Arrow, 'arrow', 'Arrow', 'a');
+  register(Line, 'line', 'Line', 'l');
 })(globalThis.Annot ??= {});

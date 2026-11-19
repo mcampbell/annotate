@@ -7,7 +7,7 @@ Browser app code. Every file is a classic `<script>` IIFE that reads and extends
 ## Interface
 
 - [lib](./lib/EGM.md): pure logic. `fitZoom`, `rectBetween`, `stepNumbers`, `history`.
-- [tools](./tools/EGM.md): one file per tool. Box, Arrow, Text, Step, Blur, Pixelate.
+- [tools](./tools/EGM.md): one file per tool. Box, Arrow, Line, Text, Step, Blur, Pixelate.
 - `app.js` adds to `Annot`:
   - `canvas`: the one `fabric.Canvas`.
   - `tools`: map of tool id to tool object.

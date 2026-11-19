@@ -6,8 +6,8 @@ let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
 test.afterEach(() => teardown(browser, errors));
 
-const KEYS = { select: 'V', box: 'B', arrow: 'A', text: 'T', step: 'N', blur: 'U', pixelate: 'P' };
-const LABELS = { select: 'Select', box: 'Box', arrow: 'Arrow', text: 'Text', step: 'Step', blur: 'Blur', pixelate: 'Pixelate' };
+const KEYS = { select: 'V', box: 'B', arrow: 'A', line: 'L', text: 'T', step: 'N', blur: 'U', pixelate: 'P' };
+const LABELS = { select: 'Select', box: 'Box', arrow: 'Arrow', line: 'Line', text: 'Text', step: 'Step', blur: 'Blur', pixelate: 'Pixelate' };
 
 test('each tool button shows its key', async () => {
   const hints = await page.$$eval('#tools button', (bs) =>

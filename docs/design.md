@@ -68,6 +68,7 @@ Run order. S2-S6 can run as parallel work streams after S1.
 | S11 | Wheel changes size | by input (wheel) | Resize without the slider | style.js |
 | S12 | Slider shows the selected object's size | by business case | See and adjust the size of what you selected | style.js, app.js |
 | S13 | Size per tool | by business case | Each tool keeps its own size | style.js, app.js |
+| S14 | Line | by business case | Connect or underline things with no head | tools/arrow.js |
 
 ### S1 - skeleton
 
@@ -331,3 +332,4 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 - [x] S13 size per tool (`style.js`, `app.js`, `test/e2e/s13-tool-size.test.js`)
 - [ ] S11 hands-on wheel check with the owner's mouse and trackpad
 - [x] S11-S13 README + `.okf/` sync
+- [x] S14 line, key `l` (`tools/arrow.js`, `test/e2e/s14-line.test.js`, `test/e2e/s9-keys.test.js`) + README, EGM, `.okf/` sync

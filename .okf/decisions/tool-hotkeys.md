@@ -25,6 +25,7 @@ The owner wanted to pick a tool from the keyboard, "a" for Arrow. A key selects 
 | V | Select | Figma and Photoshop use it. |
 | B | Box | First letter. |
 | A | Arrow | First letter. |
+| L | Line | First letter. |
 | T | Text | First letter. |
 | N | Step | Number. Select's first letter is S. |
 | U | Blur | blUr. Box has B. |

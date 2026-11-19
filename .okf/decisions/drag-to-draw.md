@@ -1,7 +1,7 @@
 ---
 type: Decision
 title: "Drag to draw"
-description: "Box, Arrow, Blur, and Pixelate draw by click-drag from start to end; Step and Text place on click."
+description: "Box, Arrow, Line, Blur, and Pixelate draw by click-drag from start to end; Step and Text place on click."
 tags: [decision]
 status: draft
 generated: { by: claude-code/claude-opus-5-5, at: '2026-10-21T21:00:00Z' }
@@ -14,7 +14,7 @@ With [click-to-drop](/decisions/click-to-drop.md), the user had to resize or res
 # Decision
 
 * Box, Blur, Pixelate: drag corner to corner, in any direction.
-* Arrow: drag from the foot to the tip.
+* Arrow and Line: drag from the foot to the tip.
 * Step and Text: click to place. They have no natural start and end.
 * A drag shorter than 5 screen px makes nothing, so a stray click leaves no object and no undo step.
 
