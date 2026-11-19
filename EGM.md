@@ -20,7 +20,8 @@ Read `.okf/index.md` for the knowledge bundle (architecture, decisions, Fabric 7
   - src/lib: [./src/lib/EGM.md](./src/lib/EGM.md) - pure logic, also `require`-able from Node.
   - src/tools: [./src/tools/EGM.md](./src/tools/EGM.md) - one file per annotation tool.
 - docs: `docs/design.md` and `docs/design-tasks.md` - design and slice plan. No code.
-- test: `test/unit/` (Node `node:test`) and `test/e2e/` (Playwright, one file per slice). No contract file.
+- test: `test/unit/` (Node `node:test`), `test/e2e/` (Playwright, one file per slice), and `test/mutations.js` (mutation list). No contract file.
+- scripts: `scripts/mutate.js` - mutation check. No contract file.
 - `.okf/`: knowledge bundle (OKF v0.2). Read it as a source.
 - `dist/` and `node_modules/`: generated. Do not edit.
 
@@ -34,9 +35,11 @@ Read `.okf/index.md` for the knowledge bundle (architecture, decisions, Fabric 7
 ## Global Side Effects
 
 - `npm run build` writes `dist/annotate.html`.
+- `npm run test:mutate` rewrites one source file at a time and restores it after each test run, also on Ctrl-C. It rebuilds `dist/annotate.html` at the end.
 - At run time, the app writes to the system clipboard and reads files from paste, drag-drop, and the file picker. It sends nothing over the network.
 
 ## System Verification
 
 - Run: `npm test` (unit: `src/lib/*` and `build.js`)
 - Run: `npm run test:e2e` (builds, then runs Playwright e2e)
+- Run: `npm run test:mutate [filter]` (applies each entry in `test/mutations.js`, runs its test, expects a failure, restores the file; exit 1 if a mutation survives or an entry is invalid)

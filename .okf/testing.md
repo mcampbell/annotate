@@ -4,11 +4,14 @@ title: "Testing"
 description: "How Annotate is tested: Node unit tests for pure logic, Playwright e2e in installed Chrome over file://."
 tags: [testing]
 status: draft
-generated: { by: claude-code/claude-opus-5-5, at: '2026-10-22T19:50:00Z' }
+generated: { by: claude-code/claude-opus-5-5, at: '2026-11-19T15:00:00Z' }
 sources:
   - id: pkg
     resource: "repo annotate: package.json"
     title: package.json
+  - id: mutate
+    resource: "repo annotate: scripts/mutate.js"
+    title: mutate.js
 ---
 
 # Overview
@@ -21,8 +24,8 @@ sources:
 
 * Test our code only. Do not add tests that prove Fabric or the browser does what it documents; settle those questions by reading the source.
 * Every e2e test fails on any uncaught page error.
-* Mutation check new logic by hand: flip it, run its tests, confirm a failure, revert.
-* One e2e file per slice: `s1-core` to `s13-tool-size`.
+* Mutation check new logic: add entries to `test/mutations.js` (`file`, `from`, `to`, `test`), then run `npm run test:mutate [filter]`. Each entry must make its test fail. `from` must occur exactly once in `file`. `scripts/mutate.js` restores each file after its run, also on Ctrl-C.
+* One e2e file per slice: `s1-core` to `s15-snap`.
 * `page.mouse.wheel` reports `wheelDeltaY` 120 for any `deltaY`, so it cannot act as a trackpad. Dispatch a synthetic `WheelEvent` on `#stage` and set `wheelDeltaY` with `Object.defineProperty` (`s11-wheel.test.js`).
 * With a drag tool active, a press adds a preview object, and its `object:added` records an undo snapshot. That can hide a missing undo record. Test undo-record paths under the Select tool.
 * `page.fill('#size', ...)` under Select stores no tool size. Pick the tool first, then set the size.
