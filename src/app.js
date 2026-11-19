@@ -11,7 +11,7 @@
   const keys = {}; // key -> tool id
   let activeTool = null;
   let loadSeq = 0;
-  let drawing = null; // { tool, obj, start } while a drag tool draws
+  let drawing = null; // { tool, obj, start, point } while a drag tool draws; point = last mouse position
   const MIN_DRAG_PX = 5; // shorter drags are clicks: they make nothing
 
   const status = (msg, isError = false) => {
@@ -87,7 +87,7 @@
     if (tool.drag) {
       obj.excludeFromExport = true; // keeps it out of undo snapshots until the drag commits
       tool.drag(obj, scenePoint, scenePoint);
-      drawing = { tool, obj, start: scenePoint };
+      drawing = { tool, obj, start: scenePoint, point: scenePoint };
       canvas.add(obj);
       return;
     }
@@ -97,17 +97,31 @@
     canvas.requestRenderAll();
   });
 
-  canvas.on('mouse:move', ({ scenePoint }) => {
-    if (!drawing) return;
-    drawing.tool.drag(drawing.obj, drawing.start, scenePoint);
-    drawing.obj.setCoords();
+  // Shift snaps the drag end (square, or 0/45/90 degrees) for a tool that has `snap`.
+  const dragEnd = (tool, start, e, p) => (e.shiftKey && tool.snap ? tool.snap(start, p) : p);
+
+  const redraw = (e) => {
+    const { tool, obj, start, point } = drawing;
+    tool.drag(obj, start, dragEnd(tool, start, e, point));
+    obj.setCoords();
     canvas.requestRenderAll();
+  };
+
+  canvas.on('mouse:move', ({ e, scenePoint }) => {
+    if (!drawing) return;
+    drawing.point = scenePoint;
+    redraw(e);
   });
 
-  canvas.on('mouse:up', ({ scenePoint }) => {
+  // A Shift press or release mid-drag redraws now, so the shape does not jump at mouse-up.
+  const onShift = (e) => drawing && e.key === 'Shift' && redraw(e);
+  document.addEventListener('keydown', onShift);
+  document.addEventListener('keyup', onShift);
+
+  canvas.on('mouse:up', ({ e, scenePoint }) => {
     if (!drawing) return;
     const { tool, obj, start } = drawing;
-    tool.drag(obj, start, scenePoint); // the release point is the end, even with no move after the last one
+    tool.drag(obj, start, dragEnd(tool, start, e, scenePoint)); // the release point is the end, even with no move after the last one
     if (Math.hypot(scenePoint.x - start.x, scenePoint.y - start.y) * canvas.getZoom() < MIN_DRAG_PX) return cancelDrawing();
     drawing = null;
     if (!canvas.contains(obj)) return; // undo or a new image removed it mid-drag

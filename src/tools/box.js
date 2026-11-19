@@ -19,6 +19,7 @@
     key: 'b',
     create: (point, style) => applyStyle(new Box(), style),
     drag: (obj, start, end) => obj.set(Annot.rectBetween(start, end)),
+    snap: Annot.snapSquare,
     applyStyle,
   });
 })(globalThis.Annot ??= {});

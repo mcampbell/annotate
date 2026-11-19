@@ -38,7 +38,7 @@
     obj.setBoundingBox(true); // recenter the object on the new points
   };
   const register = (Cls, id, label, key) =>
-    Annot.registerTool({ id, label, key, create: (p, style) => applyStyle(new Cls([{ x: p.x, y: p.y }, { x: p.x, y: p.y }]), style), drag, applyStyle });
+    Annot.registerTool({ id, label, key, create: (p, style) => applyStyle(new Cls([{ x: p.x, y: p.y }, { x: p.x, y: p.y }]), style), drag, snap: Annot.snapAngle, applyStyle });
 
   register(Arrow, 'arrow', 'Arrow', 'a');
   register(Line, 'line', 'Line', 'l');

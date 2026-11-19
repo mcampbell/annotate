@@ -6,8 +6,8 @@ Browser app code. Every file is a classic `<script>` IIFE that reads and extends
 
 ## Interface
 
-- [lib](./lib/EGM.md): pure logic. `fitZoom`, `rectBetween`, `stepNumbers`, `history`.
-- [tools](./tools/EGM.md): one file per tool. Box, Arrow, Line, Text, Step, Blur, Pixelate.
+- [lib](./lib/EGM.md): pure logic. `fitZoom`, `rectBetween`, `snapSquare`, `snapAngle`, `stepNumbers`, `history`.
+- [tools](./tools/EGM.md): one file per tool. Box, Arrow, Line, Circle, Text, Step, Blur, Pixelate.
 - `app.js` adds to `Annot`:
   - `canvas`: the one `fabric.Canvas`.
   - `tools`: map of tool id to tool object.
@@ -27,6 +27,7 @@ Browser app code. Every file is a classic `<script>` IIFE that reads and extends
 - Do not use ES modules. Chrome blocks them on `file://`.
 - Scene coordinates equal image pixels. The image sits at scene (0, 0) at natural size. Only the canvas zoom changes.
 - `app.js` sets `fabric.BaseFabricObject.customProperties = ['annotTool', 'annotSize']`. Every object keeps its tool id and size in undo snapshots.
+- While a drag draws, Shift passes the end through the tool's optional `snap`. A Shift press or release mid-drag redraws the preview. The 5 screen px short-drag check uses the raw mouse distance.
 - A drag tool preview has `excludeFromExport: true`, so undo snapshots skip it until mouse-up commits it. A drag under 5 screen px makes nothing.
 - Undo snapshots hold the objects only, not the background image. A new image resets the history.
 - Undo records one snapshot per task (microtask batch), so a multi-object change is one undo step.
@@ -36,7 +37,7 @@ Browser app code. Every file is a classic `<script>` IIFE that reads and extends
 ## Side Effects
 
 - DOM: reads and writes `#canvas`, `#tools`, `#status`, `#stage`, `#color`, `#size`, `#copy`, `#open`, `#file`, and `body.loaded`.
-- Global listeners on `document` and `window`: `keydown` (Delete, tool keys, undo and redo), `paste`, `dragover`, `drop`.
+- Global listeners on `document` and `window`: `keydown` (Delete, tool keys, undo and redo, Shift snap redraw), `keyup` (Shift snap redraw), `paste`, `dragover`, `drop`.
 - Custom canvas events: `annot:loaded` (after an image loads) and `annot:tool` (after a tool change).
 - Clipboard: `export.js` writes a PNG with `navigator.clipboard.write`.
 - Object URLs: `loadImage` creates one per load and revokes it.

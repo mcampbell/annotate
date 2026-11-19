@@ -13,7 +13,7 @@ sources:
 
 # Overview
 
-`class Box extends fabric.Rect`, registered as `Box`, dragged corner to corner (`Annot.rectBetween`, pure and unit tested), transparent fill, `strokeUniform: true` so the stroke keeps its width on resize. Color is `stroke`, size is `strokeWidth`.[^src] `perPixelTargetFind: true` in the constructor: the box hits only on its outline ([decision](/decisions/outline-hit.md)).
+`class Box extends fabric.Rect`, registered as `Box`, dragged corner to corner (`Annot.rectBetween`, pure and unit tested; Shift makes it square with `Annot.snapSquare`, see [decision](/decisions/shift-snap.md)), transparent fill, `strokeUniform: true` so the stroke keeps its width on resize. Color is `stroke`, size is `strokeWidth`.[^src] `perPixelTargetFind: true` in the constructor: the box hits only on its outline ([decision](/decisions/outline-hit.md)).
 
 See the [tool contract](/architecture/tool-contract.md).
 

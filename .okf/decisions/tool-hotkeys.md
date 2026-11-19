@@ -26,6 +26,7 @@ The owner wanted to pick a tool from the keyboard, "a" for Arrow. A key selects 
 | B | Box | First letter. |
 | A | Arrow | First letter. |
 | L | Line | First letter. |
+| C | Circle | First letter. Copy is Cmd/Ctrl+C, and tool keys ignore Cmd and Ctrl. |
 | T | Text | First letter. |
 | N | Step | Number. Select's first letter is S. |
 | U | Blur | blUr. Box has B. |
@@ -34,7 +35,7 @@ The owner wanted to pick a tool from the keyboard, "a" for Arrow. A key selects 
 
 * Each tool declares its own `key` in the [tool contract](/architecture/tool-contract.md). A duplicate key throws at load, so a clash cannot pass silently.
 * One `keydown` listener in `app.js` does nothing while the user types text, or while Cmd, Ctrl, or Alt is down. Paste, copy, and undo keep their keys.[^app]
-* Shift and Caps Lock do not matter: the lookup lowercases the key.
+* Shift and Caps Lock do not matter: the lookup lowercases the key. Shift during a drag snaps the shape ([decision](/decisions/shift-snap.md)).
 * During a [drag](/decisions/drag-to-draw.md), tool keys do nothing. Escape cancels the drag and keeps the tool. A switch to Select would turn on Fabric's box selection under the held mouse button. The cancel path is the one `touchcancel` uses, so it adds no undo step.
 * Non-Latin keyboard layouts are out of scope: one user, Latin layout.
 

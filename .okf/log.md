@@ -1,6 +1,8 @@
 # Update Log
 
 ## 2026-11-19
+* **Creation**: [Circle tool](tools/circle.md), key `c`, class type `Oval`.
+* **Creation**: [Shift snaps while drawing](decisions/shift-snap.md). The [tool contract](architecture/tool-contract.md) gains an optional `snap(start, end)`.
 * **Creation**: [Line tool](tools/line.md), key `l`. [Arrow](tools/arrow.md) now extends Line.
 
 ## 2026-10-21
