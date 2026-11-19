@@ -1,14 +1,11 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, teardown, pasteImage, toScreen, clickScene, dragScene, useTool, objects } = require('./helpers');
+const { open, teardown, pasteImage, toScreen, clickScene, dragScene, useTool, objects, near } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => ({ browser, page, errors } = await open()));
 test.afterEach(() => teardown(browser, errors));
 
-// Drags map through screen pixels at zoom < 1, so allow a few scene px of error.
-const near = (actual, expected, label) =>
-  assert.ok(Math.abs(actual - expected) <= 4, `${label}: ${actual} not near ${expected}`);
 const geometry = () =>
   page.evaluate(() => Annot.canvas.getObjects().map((o) => ({ left: o.left, top: o.top, w: o.width * o.scaleX, h: o.height * o.scaleY })));
 const assertRect = async ({ left, top, w, h }) => {

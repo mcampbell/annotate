@@ -75,8 +75,12 @@ const useTool = (page, id) => page.click(`#tools [data-tool="${id}"]`);
 const objects = (page) =>
   page.evaluate(() => Annot.canvas.getObjects().map(({ annotTool, stroke, strokeWidth, fill }) => ({ annotTool, stroke, strokeWidth, fill })));
 
+// Drags map through screen pixels at zoom < 1, so allow a few scene px of error.
+const near = (actual, expected, label) =>
+  assert.ok(Math.abs(actual - expected) <= 4, `${label}: ${actual} not near ${expected}`);
+
 // RGBA of one pixel of the exported image, in image coords.
 const exportedPixel = (page, x, y) =>
   page.evaluate(([x, y]) => [...Annot.toCanvas().getContext('2d').getImageData(x, y, 1, 1).data], [x, y]);
 
-module.exports = { open, teardown, makePng, pasteImage, toScreen, clickScene, dragScene, dragRect, useTool, objects, exportedPixel };
+module.exports = { open, teardown, makePng, pasteImage, toScreen, clickScene, dragScene, dragRect, useTool, objects, exportedPixel, near };

@@ -5,11 +5,12 @@ Browser app to annotate an image and copy the result to the clipboard as a PNG. 
 ## Features
 
 - **Load an image**: paste (Ctrl/⌘+V), drag and drop a file, or click **Open**.
-- **Tools**: each makes a movable, resizable object on the image. Box, Arrow, Line, Circle, Blur, and Pixelate: click and drag. Hold **Shift** while you drag to snap: Box and Circle stay square, and Line and Arrow snap to horizontal, vertical, or 45 degrees. Step and Text: click.
+- **Tools**: each makes a movable, resizable object on the image. Box, Arrow, Line, Circle, Blur, Pixelate, and Crop: click and drag. Hold **Shift** while you drag to snap: Box, Circle, and Crop stay square, and Line and Arrow snap to horizontal, vertical, or 45 degrees. Step and Text: click.
   - **Box**: outlined rectangle, corner to corner. Select it by its outline: a press inside goes to the active tool, so you can draw inside a box.
   - **Arrow**: drag from the foot to the tip. Drag either end later to aim it. Select it by its line or head, not the empty space beside it.
   - **Line**: as Arrow, with no head.
   - **Circle**: ellipse, corner to corner. Hold Shift for a circle. Select it by its outline, as a Box.
+  - **Crop**: drag a frame around the part to keep. The image outside it dims. **Copy** puts only the area inside the frame on the clipboard. The image itself does not change: move, resize, delete, or undo the frame at any time. One frame at a time: a new frame replaces the old one.
   - **Text**: type when it drops. Double-click to edit again. Empty text is removed.
   - **Step**: numbered bubble. Numbers update when you add or delete a step. Resize it with **Size** or the wheel; it has no resize handles.
   - **Blur** and **Pixelate**: drag corner to corner to hide that part of the image. Annotations stay visible. They update live as you move them.
@@ -24,12 +25,12 @@ Browser app to annotate an image and copy the result to the clipboard as a PNG. 
   | B | Box | U | Blur |
   | A | Arrow | P | Pixelate |
   | L | Line | T | Text |
-  | C | Circle | | |
+  | C | Circle | X | Crop |
 
   Esc during a drag cancels the drag.
 - **Delete** or **Backspace**: remove the selected objects.
 - **Undo** (Ctrl/⌘+Z) and **Redo** (Ctrl/⌘+Shift+Z, or Ctrl/⌘+Y).
-- **Copy**: puts the annotated image on the clipboard as a PNG at the original image size.
+- **Copy**: puts the annotated image on the clipboard as a PNG at the original image size. With a crop frame, it puts only the area inside the frame.
 
 Supported browsers: Chrome and Edge.
 
@@ -83,7 +84,7 @@ npm run test:mutate # breaks the code on purpose (test/mutations.js) and expects
 | `src/app.js` | Canvas, tool registry, click-to-place and drag-to-draw, Shift snap, Delete key, tool keys, image load |
 | `src/input.js` | Paste, file picker, drag and drop |
 | `src/style.js` | Color and size panel |
-| `src/export.js` | Copy PNG to clipboard |
+| `src/export.js` | Copy PNG to clipboard, cut to the crop frame |
 | `src/undo.js` | Undo and redo |
 | `src/tools/*.js` | One file per tool |
 | `src/lib/*.js` | Pure logic, unit tested in Node |

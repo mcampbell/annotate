@@ -69,6 +69,7 @@ Run order. S2-S6 can run as parallel work streams after S1.
 | S12 | Slider shows the selected object's size | by business case | See and adjust the size of what you selected | style.js, app.js |
 | S13 | Size per tool | by business case | Each tool keeps its own size | style.js, app.js |
 | S14 | Line | by business case | Connect or underline things with no head | tools/arrow.js |
+| S16 | Crop frame | by business case | Share only part of a screenshot | lib/geometry.js, export.js, tools/crop.js |
 | S15 | Shift snap + Circle tool | by business case | Square boxes, round circles, straight lines | lib/geometry.js, app.js, tools/box.js, tools/arrow.js, tools/circle.js |
 
 ### S1 - skeleton
@@ -334,4 +335,5 @@ C1 unlocks four parallel tool streams. Resolve by keeping all lines.
 - [ ] S11 hands-on wheel check with the owner's mouse and trackpad
 - [x] S11-S13 README + `.okf/` sync
 - [x] S14 line, key `l` (`tools/arrow.js`, `test/e2e/s14-line.test.js`, `test/e2e/s9-keys.test.js`) + README, EGM, `.okf/` sync
+- [x] S16 crop frame, key `x` (`lib/geometry.js`, `export.js`, `tools/crop.js`, `test/e2e/s16-crop.test.js`) + README, EGM, `.okf/` sync
 - [x] S15 Shift snap + Circle tool, key `c` (`lib/geometry.js`, `app.js`, `tools/*.js`, `test/unit/lib.test.js`, `test/e2e/s15-snap.test.js`) + README, EGM, `.okf/` sync

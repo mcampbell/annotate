@@ -26,6 +26,7 @@ The owner wanted to pick a tool from the keyboard, "a" for Arrow. A key selects 
 | B | Box | First letter. |
 | A | Arrow | First letter. |
 | L | Line | First letter. |
+| X | Crop | Looks like crop marks. C is Circle. |
 | C | Circle | First letter. Copy is Cmd/Ctrl+C, and tool keys ignore Cmd and Ctrl. |
 | T | Text | First letter. |
 | N | Step | Number. Select's first letter is S. |

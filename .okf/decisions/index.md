@@ -5,7 +5,8 @@
 * [Click to drop](click-to-drop.md) - (deprecated) A tool click drops a default-size object; the user then moves and resizes it.
 * [Undo by object snapshots](undo-snapshots.md) - Undo stores JSON of annotation objects, not commands and not the background image.
 * [Single-file build](single-file-build.md) - Ship one self-contained HTML file that opens from file://.
-* [Drag to draw](drag-to-draw.md) - Box, Arrow, Line, Circle, Blur, Pixelate draw by click-drag; supersedes click-to-drop.
-* [Outline-only hit](outline-hit.md) - Box, Arrow, Line, and Circle hit only where they draw pixels; a press inside a box goes to the active tool.
+* [Drag to draw](drag-to-draw.md) - Box, Arrow, Line, Circle, Blur, Pixelate, Crop draw by click-drag; supersedes click-to-drop.
+* [Outline-only hit](outline-hit.md) - Box, Arrow, Line, Circle, and Crop hit only where they draw pixels; a press inside a box goes to the active tool.
+* [Crop by frame, not by image edit](crop-frame.md) - Crop is a frame object that sets the Copy area; the image and undo do not change.
 * [Shift snaps while drawing](shift-snap.md) - Shift makes Box and Circle square, and snaps Line and Arrow to 0, 45, or 90 degrees.
 * [Tool hotkeys](tool-hotkeys.md) - One letter key selects each tool; Escape selects Select or cancels a drag.

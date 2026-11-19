@@ -6,4 +6,5 @@
 * [Circle tool](circle.md) - Outlined ellipse, dragged corner to corner. Shift makes it a circle.
 * [Text tool](text.md) - IText that enters edit mode on drop; emptied text is removed.
 * [Step tool](step.md) - Numbered bubble; numbers follow z-order and renumber on add and remove.
+* [Crop tool](crop.md) - One crop frame. Copy keeps the area inside it.
 * [Blur and Pixelate tools](blur.md) - Rect that re-renders the background image region under it, blurred or pixelated.

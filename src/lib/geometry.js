@@ -24,5 +24,14 @@
     return snapSquare(a, b);
   };
 
-  Object.assign(exports, { snapSquare, snapAngle });
+  // Crop area: a top-left rect clamped to a w x h image, edges rounded to whole px. null if nothing overlaps.
+  const cropBounds = ({ left, top, width, height }, w, h) => {
+    const x0 = Math.max(0, Math.round(left));
+    const y0 = Math.max(0, Math.round(top));
+    const x1 = Math.min(w, Math.round(left + width));
+    const y1 = Math.min(h, Math.round(top + height));
+    return x1 > x0 && y1 > y0 ? { left: x0, top: y0, width: x1 - x0, height: y1 - y0 } : null;
+  };
+
+  Object.assign(exports, { snapSquare, snapAngle, cropBounds });
 })(typeof module === 'object' ? module.exports : (globalThis.Annot ??= {}));

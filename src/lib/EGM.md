@@ -10,6 +10,7 @@ Pure logic with no DOM and no Fabric. Each file is a classic script IIFE. In the
 - `rectBetween(a, b)` (`geometry.js`): returns `{ left, top, width, height }` for the rect between two corner points. `left` and `top` are the center (Fabric center origin). Corner order does not matter.
 - `snapSquare(a, b)` (`geometry.js`): returns the end of a square from `a`. The side is the larger of `|dx|` and `|dy|`, in the direction of `b`. A zero side counts as positive.
 - `snapAngle(a, b)` (`geometry.js`): returns the end at 0, 45, or 90 degrees from `a`. Horizontal keeps `b.x`, vertical keeps `b.y`, 45 degrees calls `snapSquare`. The sectors split at 22.5 degrees.
+- `cropBounds(rect, w, h)` (`geometry.js`): clamps a top-left rect `{ left, top, width, height }` to a `w` x `h` image and rounds each edge to whole px. Returns `null` when nothing overlaps.
 - `stepNumbers(tools)` (`steps.js`): maps an array of tool ids in z-order to step numbers. Each `'step'` gets the next number from 1. Other entries get `null`.
 - `history` (`history.js`): immutable undo and redo stacks.
   - `history.create(present)` returns `{ past: [], present, future: [] }`.

@@ -24,7 +24,7 @@ Each tool file calls `Annot.registerTool(tool)`. `app.js` adds a toolbar button 
 | `key` | string | One lowercase character that selects the tool ([decision](/decisions/tool-hotkeys.md)). Required. A missing key throws at load. A key that another tool has throws `Tool <id>: key "<k>" is taken by <other>`. The button gets `title="<label> (<K>)"` and `aria-keyshortcuts`. |
 | `create(point, style)` | function | Returns a Fabric object at `point` (scene coords). `style` is `{ color, size }`, size 1-10. |
 | `drag(obj, start, end)` | function, optional | Makes it a drag tool. Reshapes `obj` to span `start` to `end` on every mouse move. |
-| `snap(start, end)` | function, optional | Drag tools only. Returns a new end while Shift is down ([decision](/decisions/shift-snap.md)). Box and Circle use `Annot.snapSquare`; Line and Arrow use `Annot.snapAngle`. |
+| `snap(start, end)` | function, optional | Drag tools only. Returns a new end while Shift is down ([decision](/decisions/shift-snap.md)). Box, Circle, and Crop use `Annot.snapSquare`; Line and Arrow use `Annot.snapAngle`. |
 | `applyStyle(obj, style)` | function | Sets color and size on `obj`. Returns `obj`. |
 | `afterDrop(obj)` | function, optional | Runs after add and select. Text uses it to enter edit mode. |
 
@@ -33,7 +33,7 @@ Each tool file calls `Annot.registerTool(tool)`. `app.js` adds a toolbar button 
 * A press starts only on empty canvas, with the left button or touch, when an image is loaded and a tool other than Select is active. A press on an object selects it.
 * Click tool (no `drag`): the press places the object. Drag tool: the press adds a preview with `excludeFromExport` (so undo ignores it); mouse-up commits it and fires `object:modified`, or removes it if the drag is under 5 screen px ([decision](/decisions/drag-to-draw.md)). The release point sets the final shape. A `touchcancel`, a new press after a lost mouse-up, or an undo or image load mid-drag drops the preview.
 * `annotTool` and `annotSize` serialize for every class because `app.js` sets `fabric.BaseFabricObject.customProperties = ['annotTool', 'annotSize']` ([pitfall](/pitfalls/fabric-7.md)).
-* Box, Arrow, Line, and Circle set `perPixelTargetFind: true`: they hit only where they draw pixels ([decision](/decisions/outline-hit.md)).
+* Box, Arrow, Line, Circle, and Crop set `perPixelTargetFind: true`: they hit only where they draw pixels ([decision](/decisions/outline-hit.md)).
 * A custom class type must not reuse a Fabric type that the app builds on: Step uses `Circle`, so the Circle tool class is `Oval`.
 * A custom class must call `fabric.classRegistry.setClass` and set its defaults in the constructor, not in `create`, so [undo](/modules/undo-redo.md) restores it intact.
 * To add a tool: one file in `src/tools/` with a free `key`, and one `<script>` line in `index.html`. Select owns `v`.

@@ -1,7 +1,7 @@
 ---
 type: Decision
 title: "Shift snaps while drawing"
-description: "Shift during a drag makes Box and Circle square and snaps Line and Arrow to 0, 45, or 90 degrees."
+description: "Shift during a drag makes Box, Circle, and Crop square and snaps Line and Arrow to 0, 45, or 90 degrees."
 tags: [decision, tools, keyboard]
 status: draft
 generated: { by: claude-code/claude-opus-5-5, at: '2026-11-19T14:00:00Z' }
@@ -21,7 +21,7 @@ The owner wanted Shift to snap shapes while drawing: square boxes, round circles
 # Decision
 
 * A tool opts in with an optional `snap(start, end)` in the [tool contract](/architecture/tool-contract.md). It returns a new end. `app.js` calls it in place of the raw end when Shift is down.[^app]
-* Box and [Circle](/tools/circle.md): `snapSquare`. The side is the larger of the two drag distances, in the drag direction from the start corner.[^geometry]
+* Box, [Circle](/tools/circle.md), and [Crop](/tools/crop.md): `snapSquare`. The side is the larger of the two drag distances, in the drag direction from the start corner.[^geometry]
 * [Line](/tools/line.md) and [Arrow](/tools/arrow.md): `snapAngle`. The end stays under the mouse on one axis: horizontal keeps the mouse x, vertical keeps the mouse y, and 45 degrees uses the larger distance. The sectors split at 22.5 degrees.[^geometry]
 * Snap applies only while drawing. A later handle edit stays free.
 * The Shift state at each moment decides. A Shift press or release mid-drag redraws the preview with no mouse move, so the shape does not jump at mouse-up.[^app]

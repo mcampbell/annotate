@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { fitZoom } = require('../../src/lib/fit.js');
-const { rectBetween, snapSquare, snapAngle } = require('../../src/lib/geometry.js');
+const { rectBetween, snapSquare, snapAngle, cropBounds } = require('../../src/lib/geometry.js');
 const { stepNumbers } = require('../../src/lib/steps.js');
 const { history } = require('../../src/lib/history.js');
 
@@ -93,4 +93,25 @@ test('snap functions do not mutate their arguments', () => {
 test('snap of a zero-length drag is the start point', () => {
   assert.deepEqual(snapSquare(O, O), O);
   assert.deepEqual(snapAngle(O, O), O);
+});
+
+// cropBounds: a top-left rect in scene px, clamped to a W x H image and rounded to whole px.
+const W = 400;
+const H = 300;
+
+test('cropBounds keeps a rect inside the image, rounded to whole px', () =>
+  assert.deepEqual(cropBounds({ left: 10.4, top: 20.6, width: 100.2, height: 50.3 }, W, H), { left: 10, top: 21, width: 101, height: 50 }));
+
+test('cropBounds clamps a rect that runs off each edge', () => {
+  assert.deepEqual(cropBounds({ left: -50, top: -20, width: 100, height: 70 }, W, H), { left: 0, top: 0, width: 50, height: 50 });
+  assert.deepEqual(cropBounds({ left: 350, top: 250, width: 100, height: 100 }, W, H), { left: 350, top: 250, width: 50, height: 50 });
+});
+
+test('cropBounds of a rect bigger than the image is the whole image', () =>
+  assert.deepEqual(cropBounds({ left: -10, top: -10, width: 1000, height: 1000 }, W, H), { left: 0, top: 0, width: W, height: H }));
+
+test('cropBounds is null when the rect does not overlap the image', () => {
+  assert.equal(cropBounds({ left: W, top: 0, width: 50, height: 50 }, W, H), null, 'touches the right edge only');
+  assert.equal(cropBounds({ left: -60, top: -60, width: 50, height: 50 }, W, H), null, 'fully outside');
+  assert.equal(cropBounds({ left: 10, top: 10, width: 0.2, height: 50 }, W, H), null, 'rounds to zero width');
 });

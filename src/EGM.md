@@ -6,8 +6,8 @@ Browser app code. Every file is a classic `<script>` IIFE that reads and extends
 
 ## Interface
 
-- [lib](./lib/EGM.md): pure logic. `fitZoom`, `rectBetween`, `snapSquare`, `snapAngle`, `stepNumbers`, `history`.
-- [tools](./tools/EGM.md): one file per tool. Box, Arrow, Line, Circle, Text, Step, Blur, Pixelate.
+- [lib](./lib/EGM.md): pure logic. `fitZoom`, `rectBetween`, `snapSquare`, `snapAngle`, `cropBounds`, `stepNumbers`, `history`.
+- [tools](./tools/EGM.md): one file per tool. Box, Arrow, Line, Circle, Text, Step, Blur, Pixelate, Crop.
 - `app.js` adds to `Annot`:
   - `canvas`: the one `fabric.Canvas`.
   - `tools`: map of tool id to tool object.
@@ -17,7 +17,7 @@ Browser app code. Every file is a classic `<script>` IIFE that reads and extends
   - `status(msg, isError)`: sets the status line.
   - `isTyping(e)`: true while the user edits text.
 - `style.js` adds `Annot.style()`. It returns `{ color, size }` from the panel.
-- `export.js` adds `Annot.toCanvas()`. It returns the image and annotations at natural image size.
+- `export.js` adds `Annot.toCanvas()`. It returns the image and annotations at natural image size. With a crop frame (an object with `annotTool` equal to `'crop'`), it returns only the area inside the frame, clamped to the image, and hides the frame while it renders. It throws `the crop frame is off the image` when the frame does not overlap the image.
 - `undo.js` adds `Annot.undoBusy()`. It is true while a restore runs.
 - `input.js` adds nothing. It calls `Annot.loadImage` for paste, the Open button, and drag-drop.
 - `app.css`: page styles.

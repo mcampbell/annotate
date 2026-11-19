@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { open, teardown, pasteImage, clickScene, dragScene, toScreen, useTool, exportedPixel } = require('./helpers');
+const { open, teardown, pasteImage, clickScene, dragScene, toScreen, useTool, exportedPixel, near } = require('./helpers');
 
 let browser, page, errors;
 test.beforeEach(async () => {
@@ -9,9 +9,6 @@ test.beforeEach(async () => {
 });
 test.afterEach(() => teardown(browser, errors));
 
-// Drags map through screen pixels at zoom < 1, so allow a few scene px of error.
-const near = (actual, expected, label) =>
-  assert.ok(Math.abs(actual - expected) <= 4, `${label}: ${actual} not near ${expected}`);
 const nearAll = (actual, expected, label = '') => Object.keys(expected).forEach((k) => near(actual[k], expected[k], `${label} ${k}`));
 
 const shiftDrag = async (...xy) => {
