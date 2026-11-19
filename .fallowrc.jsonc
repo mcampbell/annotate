@@ -1,0 +1,6 @@
+{
+  // index.html loads each src file with a classic <script src> or <link rel="stylesheet">; fallow does not read HTML.
+  "entry": ["src/**/*.js", "src/**/*.css"],
+  // Tests may repeat setup and steps: each test file reads on its own (owner decision, 2026-11-19).
+  "duplicates": { "ignore": ["test/**"] }
+}

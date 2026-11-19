@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-11-19
+* **Update**: [Testing](testing.md) - fallow config and quality check.
 * **Creation**: [Crop tool](tools/crop.md), key `x`, and [Crop by frame](decisions/crop-frame.md). [Clipboard export](modules/clipboard-export.md) copies only the area inside the frame.
 * **Update**: [Testing](testing.md) - mutation check is now `npm run test:mutate` with entries in `test/mutations.js`.
 * **Creation**: [Circle tool](tools/circle.md), key `c`, class type `Oval`.
